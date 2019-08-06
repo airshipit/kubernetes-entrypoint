@@ -9,9 +9,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	cli "github.com/stackanetes/kubernetes-entrypoint/client"
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"github.com/stackanetes/kubernetes-entrypoint/mocks"
+	cli "opendev.org/airship/kubernetes-entrypoint/client"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/mocks"
 )
 
 const (

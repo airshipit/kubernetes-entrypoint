@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	cli "github.com/stackanetes/kubernetes-entrypoint/client"
+	cli "opendev.org/airship/kubernetes-entrypoint/client"
 )
 
 type MockEntrypoint struct {

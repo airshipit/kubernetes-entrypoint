@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
 )
 
 const (

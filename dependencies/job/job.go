@@ -6,9 +6,9 @@ import (
 	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
+	entry "opendev.org/airship/kubernetes-entrypoint/entrypoint"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 const FailingStatusFormat = "Job %s is not completed yet"

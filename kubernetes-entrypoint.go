@@ -3,17 +3,17 @@ package main
 import (
 	"os"
 
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/config"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/container"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/daemonset"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/job"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/pod"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/service"
-	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/socket"
-	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"github.com/stackanetes/kubernetes-entrypoint/util/command"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/config"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/container"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/daemonset"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/job"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/pod"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/service"
+	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/socket"
+	entry "opendev.org/airship/kubernetes-entrypoint/entrypoint"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
+	command "opendev.org/airship/kubernetes-entrypoint/util/command"
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 func main() {

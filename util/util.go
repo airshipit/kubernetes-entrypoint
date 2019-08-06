@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 func GetIp() (string, error) {

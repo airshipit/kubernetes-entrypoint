@@ -5,8 +5,8 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
+	entry "opendev.org/airship/kubernetes-entrypoint/entrypoint"
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 const FailingStatusFormat = "Service %v has no endpoints"

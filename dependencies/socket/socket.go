@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"github.com/stackanetes/kubernetes-entrypoint/util"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
+	entry "opendev.org/airship/kubernetes-entrypoint/entrypoint"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/util"
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 const (

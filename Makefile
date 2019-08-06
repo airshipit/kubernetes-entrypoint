@@ -1,35 +1,33 @@
-REPO_URI ?= github.com/stackanetes
-REPO_PATH ?= $(REPO_URI)/kubernetes-entrypoint
+GOOS          ?= $(shell go env GOOS)
+GOARCH        ?= $(shell go env GOARCH)
 
-prepare:
-	@echo "Preapre GOPATH"
-	test -h gopath/src/$(REPO_PATH) || \
-		( mkdir -p gopath/src/$(REPO_URI); \
-		ln -s ../../../.. gopath/src/$(REPO_PATH) )
-
-build: prepare
-	@echo "Building kubernetes-entrypoint for $(GOOS)/$(GOARCH) $(GOPATH)"
+.PHONY: build
+build:
+	@echo "Building kubernetes-entrypoint for $(GOOS)/$(GOARCH)"
 	mkdir -p bin/$(GOARCH)
 	go build -o bin/$(GOARCH)/kubernetes_entrypoint
 
+.PHONY: get-modules
+get-modules:
+	@go mod download
+
+.PHONY: linux-arm64
 linux-arm64:
-	export GOOS="linux"; \
-	export GOARCH="arm64"; \
-	export GOPATH="$(PWD)/gopath"; \
-	$(MAKE) build
+linux-arm64: GOOS = "linux"
+linux-arm64: GOARCH = "arm64"
+linux-arm64: build
 
-linux-amd64:
-	export GOOS="linux"; \
-	export GOARCH="amd64"; \
-	export GOPATH="$(PWD)/gopath"; \
-	$(MAKE) build
+.PHONY: linux-amd64
+linux-amd64: GOOS = "linux"
+linux-amd64: GOARCH = "amd64"
+linux-amd64: build
 
+.PHONY: clean
 clean:
-	rm -rf gopath
 	rm -rf bin
 
-test: prepare
-	export GOPATH="$(PWD)/gopath"; \
-	go test
+.PHONY: test
+test:
+	go test ./...
 
 all: linux-amd64 linux-arm64

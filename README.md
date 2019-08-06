@@ -107,4 +107,4 @@ Can be found [here](https://quay.io/repository/stackanetes/kubernetes-entrypoint
 
 ## Examples
 
-[Stackanetes](http://github.com/stackanetes/stackanetes) uses kubernetes-entrypoint to manage dependencies when deploying OpenStack on Kubernetes.
+[OpenStack Helm](https://github.com/openstack/openstack-helm-infra/blob/master/helm-toolkit/templates/snippets/_kubernetes_entrypoint_init_container.tpl) uses kubernetes-entrypoint to manage dependencies when deploying OpenStack on Kubernetes.

@@ -5,7 +5,7 @@ import (
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	v1beta1extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 
-	cli "github.com/stackanetes/kubernetes-entrypoint/client"
+	cli "opendev.org/airship/kubernetes-entrypoint/client"
 )
 
 type Client struct {

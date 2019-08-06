@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"syscall"
 
-	"github.com/stackanetes/kubernetes-entrypoint/logger"
+	"opendev.org/airship/kubernetes-entrypoint/logger"
 )
 
 func Execute(command []string) error {
