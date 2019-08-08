@@ -3,9 +3,10 @@ package service
 import (
 	"fmt"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const FailingStatusFormat = "Service %v has no endpoints"

@@ -3,8 +3,6 @@ package main
 import (
 	"os"
 
-	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/config"
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/container"
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/daemonset"
@@ -12,8 +10,9 @@ import (
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/pod"
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/service"
 	_ "github.com/stackanetes/kubernetes-entrypoint/dependencies/socket"
+	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	command "github.com/stackanetes/kubernetes-entrypoint/util/command"
+	"github.com/stackanetes/kubernetes-entrypoint/util/command"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
 )
 

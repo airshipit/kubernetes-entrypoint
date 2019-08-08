@@ -3,14 +3,14 @@ package container
 import (
 	"fmt"
 	"os"
-
 	"strings"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
 	"github.com/stackanetes/kubernetes-entrypoint/util"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -54,7 +54,7 @@ func (c Container) IsResolved(entrypoint entry.EntrypointInterface) (bool, error
 	}
 
 	if strings.Contains(c.name, env.Separator) {
-		return false, fmt.Errorf("Specifing namespace is not permitted")
+		return false, fmt.Errorf("Specifying namespace is not permitted")
 	}
 	containers := pod.Status.ContainerStatuses
 	for _, container := range containers {

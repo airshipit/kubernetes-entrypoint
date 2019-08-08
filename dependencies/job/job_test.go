@@ -3,11 +3,11 @@ package job
 import (
 	"fmt"
 
-	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/mocks"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
+	"github.com/stackanetes/kubernetes-entrypoint/mocks"
 )
 
 const testJobName = "TEST_JOB_NAME"

@@ -25,13 +25,15 @@ const (
 )
 
 func (d dClient) Get(name string, opts metav1.GetOptions) (*v1beta1.DaemonSet, error) {
-	matchLabelName := MockContainerName
+	if name == FailingDaemonsetName || name == IncorrectNamespaceDaemonsetName {
+		return nil, fmt.Errorf("Mock daemonset didn't work")
+	}
 
-	if name == FailingDaemonsetName {
-		return nil, fmt.Errorf("Mock daemonset didnt work")
-	} else if name == FailingMatchLabelsDaemonsetName {
+	matchLabelName := MockContainerName
+	switch name {
+	case FailingMatchLabelsDaemonsetName:
 		matchLabelName = FailingMatchLabel
-	} else if name == NotReadyMatchLabelsDaemonsetName {
+	case NotReadyMatchLabelsDaemonsetName:
 		matchLabelName = SameHostNotReadyMatchLabel
 	}
 
@@ -46,8 +48,6 @@ func (d dClient) Get(name string, opts metav1.GetOptions) (*v1beta1.DaemonSet, e
 
 	if name == CorrectNamespaceDaemonsetName {
 		ds.ObjectMeta.Namespace = CorrectDaemonsetNamespace
-	} else if name == IncorrectNamespaceDaemonsetName {
-		return nil, fmt.Errorf("Mock daemonset didnt work")
 	}
 
 	return ds, nil
@@ -79,7 +79,8 @@ func (d dClient) Watch(options metav1.ListOptions) (watch.Interface, error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 
-func (d dClient) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.DaemonSet, err error) {
+func (d dClient) Patch(name string, pt types.PatchType, data []byte,
+	subresources ...string) (result *v1beta1.DaemonSet, err error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 

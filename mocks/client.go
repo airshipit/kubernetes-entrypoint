@@ -1,10 +1,11 @@
 package mocks
 
 import (
-	cli "github.com/stackanetes/kubernetes-entrypoint/client"
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	v1beta1extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
+
+	cli "github.com/stackanetes/kubernetes-entrypoint/client"
 )
 
 type Client struct {

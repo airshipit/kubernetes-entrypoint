@@ -4,9 +4,10 @@ import (
 	"sync"
 	"time"
 
+	"k8s.io/client-go/rest"
+
 	cli "github.com/stackanetes/kubernetes-entrypoint/client"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
-	"k8s.io/client-go/rest"
 )
 
 var dependencies []Resolver // List containing all dependencies to be resolved
@@ -66,7 +67,7 @@ func (e Entrypoint) Resolve() {
 			logger.Info.Printf("Resolving %v", dep)
 			var err error
 			status := false
-			for status == false {
+			for !status {
 				if status, err = dep.IsResolved(e); err != nil {
 					logger.Warning.Printf("Resolving dependency %s failed: %v .", dep, err)
 				}

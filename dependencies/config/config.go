@@ -80,7 +80,7 @@ func (c Config) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 
 }
 
-func (c Config) createAndTemplateConfig() (err error) {
+func (c Config) createAndTemplateConfig() error {
 	config, err := os.Create(c.name)
 	if err != nil {
 		return err
@@ -91,7 +91,7 @@ func (c Config) createAndTemplateConfig() (err error) {
 	if err = temp.Execute(config, c.params); err != nil {
 		return err
 	}
-	return
+	return nil
 }
 
 func getSrcConfig(prefix string, config string) (srcConfig string) {

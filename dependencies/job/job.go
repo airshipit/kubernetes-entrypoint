@@ -3,11 +3,12 @@ package job
 import (
 	"fmt"
 
+	v1 "k8s.io/api/batch/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
-	v1 "k8s.io/api/batch/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const FailingStatusFormat = "Job %s is not completed yet"
@@ -78,13 +79,11 @@ func (j Job) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 }
 
 func (j Job) String() string {
-	var prefix string
+	prefix := "Jobs"
 	if j.name != "" {
 		prefix = fmt.Sprintf("Job %s", j.name)
 	} else if j.labels != nil {
 		prefix = fmt.Sprintf("Jobs with labels %s", j.labels)
-	} else {
-		prefix = "Jobs"
 	}
 	return fmt.Sprintf("%s in namespace %s", prefix, j.namespace)
 }

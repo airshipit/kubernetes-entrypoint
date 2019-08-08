@@ -45,13 +45,16 @@ func (j jClient) DeleteCollection(options *metav1.DeleteOptions, listOptions met
 }
 func (j jClient) List(options metav1.ListOptions) (*v1.JobList, error) {
 	var jobs []v1.Job
-	if options.LabelSelector == fmt.Sprintf("name=%s", SucceedingJobLabel) {
+
+	switch options.LabelSelector {
+	case fmt.Sprintf("name=%s", SucceedingJobLabel):
 		jobs = []v1.Job{NewJob(1)}
-	} else if options.LabelSelector == fmt.Sprintf("name=%s", FailingJobLabel) {
+	case fmt.Sprintf("name=%s", FailingJobLabel):
 		jobs = []v1.Job{NewJob(1), NewJob(0)}
-	} else {
+	default:
 		return nil, fmt.Errorf("Mock job didnt work")
 	}
+
 	return &v1.JobList{
 		Items: jobs,
 	}, nil
@@ -69,7 +72,8 @@ func (j jClient) Watch(options metav1.ListOptions) (watch.Interface, error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 
-func (j jClient) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Job, err error) {
+func (j jClient) Patch(name string, pt types.PatchType, data []byte,
+	subresources ...string) (result *v1.Job, err error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 func NewJClient() v1batch.JobInterface {

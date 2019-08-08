@@ -8,6 +8,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
 	cli "github.com/stackanetes/kubernetes-entrypoint/client"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
 	"github.com/stackanetes/kubernetes-entrypoint/mocks"
@@ -103,6 +104,8 @@ var _ = Describe("Entrypoint", func() {
 		time.Sleep(5 * time.Second)
 
 		stdout, _ := ioutil.ReadAll(r)
-		Expect(string(stdout)).To(Equal(fmt.Sprintf("%sResolving %v\n%sDependency %v is resolved.\n", loggerInfoText, dummy, loggerInfoText, dummy)))
+		resolvedString := fmt.Sprintf("%sResolving %v\n%sDependency %v is resolved.\n",
+			loggerInfoText, dummy, loggerInfoText, dummy)
+		Expect(string(stdout)).To(Equal(resolvedString))
 	})
 })

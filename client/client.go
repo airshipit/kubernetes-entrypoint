@@ -20,27 +20,28 @@ type Client struct {
 }
 
 func (c Client) Pods(namespace string) v1core.PodInterface {
-	return c.Clientset.Core().Pods(namespace)
+	return c.Clientset.CoreV1().Pods(namespace)
 }
 
 func (c Client) Jobs(namespace string) v1batch.JobInterface {
-	return c.Clientset.Batch().Jobs(namespace)
+	return c.Clientset.BatchV1().Jobs(namespace)
 }
 
 func (c Client) Endpoints(namespace string) v1core.EndpointsInterface {
-	return c.Clientset.Core().Endpoints(namespace)
+	return c.Clientset.CoreV1().Endpoints(namespace)
 }
 func (c Client) DaemonSets(namespace string) v1beta1extensions.DaemonSetInterface {
-	return c.Clientset.Extensions().DaemonSets(namespace)
+	return c.Clientset.ExtensionsV1beta1().DaemonSets(namespace)
 }
 
 func (c Client) Services(namespace string) v1core.ServiceInterface {
-	return c.Clientset.Core().Services(namespace)
+	return c.Clientset.CoreV1().Services(namespace)
 }
 
 func New(config *rest.Config) (ClientInterface, error) {
 	if config == nil {
-		config, err := rest.InClusterConfig()
+		var err error
+		config, err = rest.InClusterConfig()
 		if err != nil {
 			return nil, err
 		}

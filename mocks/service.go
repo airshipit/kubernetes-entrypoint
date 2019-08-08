@@ -3,12 +3,12 @@ package mocks
 import (
 	"fmt"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/client-go/rest"
+	rest "k8s.io/client-go/rest"
 )
 
 type sClient struct {
@@ -57,11 +57,13 @@ func (s sClient) Watch(options metav1.ListOptions) (watch.Interface, error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 
-func (s sClient) ProxyGet(scheme string, name string, port string, path string, params map[string]string) rest.ResponseWrapper {
+func (s sClient) ProxyGet(scheme string, name string, port string, path string,
+	params map[string]string) rest.ResponseWrapper {
 	return nil
 }
 
-func (s sClient) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Service, err error) {
+func (s sClient) Patch(name string, pt types.PatchType, data []byte,
+	subresources ...string) (result *v1.Service, err error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 

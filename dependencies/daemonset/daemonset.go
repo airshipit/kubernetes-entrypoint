@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
-	"k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -24,15 +25,14 @@ type Daemonset struct {
 
 func init() {
 	daemonsetEnv := fmt.Sprintf("%sDAEMONSET", entry.DependencyPrefix)
-	if daemonsetsDeps := env.SplitEnvToDeps(daemonsetEnv); daemonsetsDeps != nil {
-		for _, dep := range daemonsetsDeps {
-			daemonset, err := NewDaemonset(dep.Name, dep.Namespace)
-			if err != nil {
-				logger.Error.Printf("Cannot initialize daemonset: %v", err)
-				continue
-			}
-			entry.Register(daemonset)
+	daemonsetsDeps := env.SplitEnvToDeps(daemonsetEnv)
+	for _, dep := range daemonsetsDeps {
+		daemonset, err := NewDaemonset(dep.Name, dep.Namespace)
+		if err != nil {
+			logger.Error.Printf("Cannot initialize daemonset: %v", err)
+			continue
 		}
+		entry.Register(daemonset)
 	}
 }
 
@@ -71,6 +71,7 @@ func (d Daemonset) IsResolved(entrypoint entry.EntrypointInterface) (bool, error
 	myHost := myPod.Status.HostIP
 
 	for _, pod := range daemonsetPods.Items {
+		pod := pod // pinning
 		if !isPodOnHost(&pod, myHost) {
 			continue
 		}
@@ -84,10 +85,7 @@ func (d Daemonset) IsResolved(entrypoint entry.EntrypointInterface) (bool, error
 }
 
 func isPodOnHost(pod *v1.Pod, hostIP string) bool {
-	if pod.Status.HostIP == hostIP {
-		return true
-	}
-	return false
+	return pod.Status.HostIP == hostIP
 }
 
 func isPodReady(pod v1.Pod) bool {

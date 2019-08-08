@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	entry "github.com/stackanetes/kubernetes-entrypoint/entrypoint"
 	"github.com/stackanetes/kubernetes-entrypoint/logger"
 	"github.com/stackanetes/kubernetes-entrypoint/util/env"
-	"k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -25,15 +26,14 @@ type Pod struct {
 
 func init() {
 	podEnv := fmt.Sprintf("%sPOD%s", entry.DependencyPrefix, entry.JsonSuffix)
-	if podDeps := env.SplitPodEnvToDeps(podEnv); podDeps != nil {
-		for _, dep := range podDeps {
-			pod, err := NewPod(dep.Labels, dep.Namespace, dep.RequireSameNode)
-			if err != nil {
-				logger.Error.Printf("Cannot initialize pod: %v", err)
-				continue
-			}
-			entry.Register(pod)
+	podDeps := env.SplitPodEnvToDeps(podEnv)
+	for _, dep := range podDeps {
+		pod, err := NewPod(dep.Labels, dep.Namespace, dep.RequireSameNode)
+		if err != nil {
+			logger.Error.Printf("Cannot initialize pod: %v", err)
+			continue
 		}
+		entry.Register(pod)
 	}
 }
 
@@ -73,6 +73,7 @@ func (p Pod) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 	podCount := 0
 	for _, pod := range matchingPods {
 		podCount++
+		pod := pod // pinning
 		if p.requireSameNode && !isPodOnHost(&pod, myHost) {
 			continue
 		}
@@ -92,10 +93,7 @@ func (p Pod) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 }
 
 func isPodOnHost(pod *v1.Pod, hostIP string) bool {
-	if pod.Status.HostIP == hostIP {
-		return true
-	}
-	return false
+	return pod.Status.HostIP == hostIP
 }
 
 func isPodReady(pod v1.Pod) bool {

@@ -3,13 +3,13 @@ package mocks
 import (
 	"fmt"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	policy "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
-	"k8s.io/client-go/rest"
+	rest "k8s.io/client-go/rest"
 )
 
 const MockContainerName = "TEST_CONTAINER"
@@ -120,7 +120,8 @@ func (p pClient) GetLogs(name string, opts *v1.PodLogOptions) *rest.Request {
 	return nil
 }
 
-func (p pClient) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Pod, err error) {
+func (p pClient) Patch(name string, pt types.PatchType, data []byte,
+	subresources ...string) (result *v1.Pod, err error) {
 	return nil, fmt.Errorf("Not implemented")
 }
 func NewPClient() v1core.PodInterface {

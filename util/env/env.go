@@ -49,7 +49,7 @@ func SplitEnvToDeps(env string) (envList []Dependency) {
 
 	envVars := strings.Split(e, separator)
 	namespace := GetBaseNamespace()
-	dep := Dependency{}
+	var dep Dependency
 	for _, envVar := range envVars {
 		if strings.Contains(envVar, Separator) {
 			nameAfterSplit := strings.Split(envVar, Separator)
@@ -61,15 +61,11 @@ func SplitEnvToDeps(env string) (envList []Dependency) {
 				logger.Warning.Printf("Invalid format, missing namespace %s", envVar)
 				continue
 			}
-
 			dep = Dependency{Name: nameAfterSplit[1], Namespace: nameAfterSplit[0]}
-
 		} else {
 			dep = Dependency{Name: envVar, Namespace: namespace}
 		}
-
 		envList = append(envList, dep)
-
 	}
 
 	return envList

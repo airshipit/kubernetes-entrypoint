@@ -7,11 +7,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/mocks"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
+	"github.com/stackanetes/kubernetes-entrypoint/mocks"
 )
 
 const (
@@ -28,7 +28,6 @@ var testEntrypoint entrypoint.EntrypointInterface
 var testConfigContents string
 var testConfigPath string
 var testTemplatePath string
-var hostname string
 
 // var testClient cli.ClientInterface
 
@@ -53,17 +52,17 @@ func teardownOsEnvironment() (err error) {
 	return os.Unsetenv(interfaceName)
 }
 
-func setupConfigTemplate(templatePath string) (err error) {
+func setupConfigTemplate(templatePath string) error {
 	configContent := []byte(testConfigContents)
 	if err := os.MkdirAll(filepath.Dir(templatePath), 0755); err != nil {
 		return err
 	}
 
-	if err = ioutil.WriteFile(templatePath, configContent, 0644); err != nil {
+	if err := ioutil.WriteFile(templatePath, configContent, 0644); err != nil {
 		return err
 	}
 
-	return
+	return nil
 }
 
 func teardownConfigTemplate(templatePath string) (err error) {
@@ -111,7 +110,8 @@ var _ = Describe("Config", func() {
 
 	It("checks the format of a newly created config file", func() {
 		config, _ := NewConfig(testConfigPath, templatePrefix)
-		config.IsResolved(testEntrypoint)
+		_, err := config.IsResolved(testEntrypoint)
+		Expect(err).NotTo(HaveOccurred())
 
 		result, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", testDir, testConfigName))
 		Expect(err).NotTo(HaveOccurred())
@@ -121,7 +121,7 @@ var _ = Describe("Config", func() {
 
 		expectedFile := fmt.Sprintf(testConfigContentsFormat, hostname)
 
-		readConfig := string(result[:])
+		readConfig := string(result)
 		Expect(readConfig).To(BeEquivalentTo(expectedFile))
 	})
 

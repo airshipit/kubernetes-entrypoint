@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
-	"github.com/stackanetes/kubernetes-entrypoint/mocks"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/stackanetes/kubernetes-entrypoint/entrypoint"
+	"github.com/stackanetes/kubernetes-entrypoint/mocks"
 )
 
 const (
@@ -32,7 +32,8 @@ var _ = Describe("Daemonset", func() {
 		daemonset, err := NewDaemonset(mocks.SucceedingDaemonsetName, daemonsetNamespace)
 
 		Expect(daemonset).To(BeNil())
-		Expect(err.Error()).To(Equal(fmt.Sprintf(PodNameNotSetErrorFormat, mocks.SucceedingDaemonsetName, daemonsetNamespace)))
+		errMsg := fmt.Sprintf(PodNameNotSetErrorFormat, mocks.SucceedingDaemonsetName, daemonsetNamespace)
+		Expect(err.Error()).To(Equal(errMsg))
 	})
 
 	It(fmt.Sprintf("creates new daemonset with %s set and checks its name", PodNameEnvVar), func() {
@@ -126,6 +127,5 @@ var _ = Describe("Daemonset", func() {
 
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isResolved).To(BeTrue())
-		err = os.Unsetenv(PodNameEnvVar)
 	})
 })

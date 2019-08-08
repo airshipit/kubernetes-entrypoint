@@ -2,13 +2,15 @@ package util
 
 import (
 	"fmt"
-	"github.com/stackanetes/kubernetes-entrypoint/util/env"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/stackanetes/kubernetes-entrypoint/logger"
+	"github.com/stackanetes/kubernetes-entrypoint/util/env"
 )
 
-func GetIp() (ip string, err error) {
+func GetIp() (string, error) {
 	var iface string
 	if iface = os.Getenv("INTERFACE_NAME"); iface == "" {
 		return "", fmt.Errorf("Environment variable INTERFACE_NAME not set")
@@ -23,13 +25,13 @@ func GetIp() (ip string, err error) {
 		return "", fmt.Errorf("Cannot get ip: %v", err)
 	}
 	//Take first element to get rid of subnet
-	ip = strings.Split(address[0].String(), "/")[0]
-	return
+	ip := strings.Split(address[0].String(), "/")[0]
+	return ip, nil
 }
 
 func ContainsSeparator(envString string, kind string) bool {
 	if strings.Contains(envString, env.Separator) {
-		fmt.Errorf("%s doesn't accept namespace: %s", kind, envString)
+		logger.Error.Printf("%s doesn't accept namespace: %s", kind, envString)
 		return true
 	}
 	return false

@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	//"Info logger""
+	//Info logger
 	Info *log.Logger
-	//"Error logger"
+	//Error logger
 	Error *log.Logger
 	//Warning logger
 	Warning *log.Logger
