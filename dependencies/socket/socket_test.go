@@ -2,7 +2,9 @@ package socket
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,21 +14,45 @@ import (
 )
 
 const (
-	existingSocketPath    = "/tmp/k8s-existing-socket"
-	nonExistingSocketPath = "/tmp/k8s-nonexisting-socket"
-	noPermsSocketPath     = "/root/k8s-no-permission-socket"
+	tempPathSuffix = "k8s-entrypoint"
+
+	existingSocket    = "existing-socket"
+	nonExistingSocket = "nonexisting-socket"
+)
+
+var (
+	testDir string
+
+	existingSocketPath    string
+	nonExistingSocketPath string
 )
 
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Socket", func() {
 
+	// NOTE: It is impossible for a user to create a file that he does not
+	// have access to, and thus it is impossible to write an isolated unit
+	// test that checks for permission errors. That test is omitted from
+	// this suite
+
 	BeforeEach(func() {
 		testEntrypoint = mocks.NewEntrypoint()
 
-		_, err := os.Create(existingSocketPath)
+		var err error
+		testDir, err = ioutil.TempDir("", tempPathSuffix)
 		Expect(err).NotTo(HaveOccurred())
 
+		existingSocketPath = filepath.Join(testDir, existingSocket)
+		nonExistingSocketPath = filepath.Join(testDir, nonExistingSocket)
+
+		_, err = os.Create(existingSocketPath)
+		Expect(err).NotTo(HaveOccurred())
+	})
+
+	AfterEach(func() {
+		err := os.RemoveAll(testDir)
+		Expect(err).NotTo(HaveOccurred())
 	})
 
 	It("checks the name of a newly created socket", func() {
@@ -52,15 +78,5 @@ var _ = Describe("Socket", func() {
 		Expect(isResolved).To(Equal(false))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(Equal(fmt.Sprintf(NonExistingErrorFormat, socket)))
-	})
-
-	It("fails on trying to resolve a socket without permissions", func() {
-		socket := NewSocket(noPermsSocketPath)
-
-		isResolved, err := socket.IsResolved(testEntrypoint)
-
-		Expect(isResolved).To(Equal(false))
-		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(Equal(fmt.Sprintf(NoPermsErrorFormat, socket)))
 	})
 })

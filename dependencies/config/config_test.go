@@ -65,8 +65,12 @@ func setupConfigTemplate(templatePath string) error {
 	return nil
 }
 
-func teardownConfigTemplate(templatePath string) (err error) {
-	if err := os.RemoveAll(templatePath); err != nil {
+func teardownConfigTemplate() (err error) {
+	if err := os.RemoveAll(templatePrefix); err != nil {
+		return err
+	}
+
+	if err := os.RemoveAll(testConfigPath); err != nil {
 		return err
 	}
 
@@ -89,7 +93,7 @@ var _ = Describe("Config", func() {
 		err := teardownOsEnvironment()
 		Expect(err).NotTo(HaveOccurred())
 
-		err = teardownConfigTemplate(testTemplatePath)
+		err = teardownConfigTemplate()
 		Expect(err).NotTo(HaveOccurred())
 	})
 
