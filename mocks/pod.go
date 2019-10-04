@@ -124,6 +124,17 @@ func (p pClient) Patch(name string, pt types.PatchType, data []byte,
 	subresources ...string) (result *v1.Pod, err error) {
 	return nil, fmt.Errorf("Not implemented")
 }
+
+func (p pClient) GetEphemeralContainers(podName string,
+	options metav1.GetOptions) (*v1.EphemeralContainers, error) {
+	return nil, fmt.Errorf("Not implemented")
+}
+
+func (p pClient) UpdateEphemeralContainers(podName string,
+	ephemeralContainers *v1.EphemeralContainers) (*v1.EphemeralContainers, error) {
+	return nil, fmt.Errorf("Not implemented")
+}
+
 func NewPClient() v1core.PodInterface {
 	return pClient{}
 }

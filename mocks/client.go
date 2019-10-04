@@ -1,9 +1,9 @@
 package mocks
 
 import (
+	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
-	v1beta1extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 
 	cli "opendev.org/airship/kubernetes-entrypoint/client"
 )
@@ -11,7 +11,7 @@ import (
 type Client struct {
 	v1core.PodInterface
 	v1core.ServiceInterface
-	v1beta1extensions.DaemonSetInterface
+	appsv1.DaemonSetInterface
 	v1core.EndpointsInterface
 	v1batch.JobInterface
 }
@@ -24,7 +24,7 @@ func (c Client) Services(namespace string) v1core.ServiceInterface {
 	return c.ServiceInterface
 }
 
-func (c Client) DaemonSets(namespace string) v1beta1extensions.DaemonSetInterface {
+func (c Client) DaemonSets(namespace string) appsv1.DaemonSetInterface {
 	return c.DaemonSetInterface
 }
 
