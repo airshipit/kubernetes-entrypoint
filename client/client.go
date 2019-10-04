@@ -1,6 +1,13 @@
 package client
 
 import (
+	"fmt"
+	"strings"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
@@ -14,28 +21,61 @@ type ClientInterface interface {
 	Endpoints(string) v1core.EndpointsInterface
 	DaemonSets(string) appsv1.DaemonSetInterface
 	Services(string) v1core.ServiceInterface
+	CustomResource(apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error)
 }
 type Client struct {
-	*kubernetes.Clientset
+	client        kubernetes.Interface
+	dynamicClient dynamic.Interface
 }
 
 func (c Client) Pods(namespace string) v1core.PodInterface {
-	return c.Clientset.CoreV1().Pods(namespace)
+	return c.client.CoreV1().Pods(namespace)
 }
 
 func (c Client) Jobs(namespace string) v1batch.JobInterface {
-	return c.Clientset.BatchV1().Jobs(namespace)
+	return c.client.BatchV1().Jobs(namespace)
 }
 
 func (c Client) Endpoints(namespace string) v1core.EndpointsInterface {
-	return c.Clientset.CoreV1().Endpoints(namespace)
+	return c.client.CoreV1().Endpoints(namespace)
 }
 func (c Client) DaemonSets(namespace string) appsv1.DaemonSetInterface {
-	return c.Clientset.AppsV1().DaemonSets(namespace)
+	return c.client.AppsV1().DaemonSets(namespace)
 }
 
 func (c Client) Services(namespace string) v1core.ServiceInterface {
-	return c.Clientset.CoreV1().Services(namespace)
+	return c.client.CoreV1().Services(namespace)
+}
+
+func (c Client) CustomResource(apiVersion, kind, namespace, name string) (*unstructured.Unstructured, error) {
+	apiResourceList, err := c.client.Discovery().ServerResourcesForGroupVersion(apiVersion)
+	if err != nil {
+		return nil, err
+	}
+
+	parts := strings.Split(apiVersion, "/")
+	if len(parts) != 2 {
+		return nil, fmt.Errorf(`apiVersion [%s] must be "group/version"`,
+			apiVersion)
+	}
+	group, version := parts[0], parts[1]
+
+	for _, apiResource := range apiResourceList.APIResources {
+		if apiResource.Kind == kind {
+			gvr := schema.GroupVersionResource{
+				Group:    group,
+				Version:  version,
+				Resource: apiResource.Name,
+			}
+
+			return c.dynamicClient.Resource(gvr).
+				Namespace(namespace).
+				Get(name, metav1.GetOptions{})
+		}
+	}
+	return nil, fmt.Errorf("Could not find resource with with version %v, "+
+		"kind %v, and name %v in namespace %v",
+		apiVersion, kind, name, namespace)
 }
 
 func New(config *rest.Config) (ClientInterface, error) {
@@ -45,11 +85,6 @@ func New(config *rest.Config) (ClientInterface, error) {
 		if err != nil {
 			return nil, err
 		}
-		clientset, err := kubernetes.NewForConfig(config)
-		if err != nil {
-			return nil, err
-		}
-		return Client{Clientset: clientset}, nil
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
@@ -57,6 +92,10 @@ func New(config *rest.Config) (ClientInterface, error) {
 		return nil, err
 	}
 
-	return Client{Clientset: clientset}, nil
+	dynamicClient, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
 
+	return Client{clientset, dynamicClient}, nil
 }

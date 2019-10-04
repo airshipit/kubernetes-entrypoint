@@ -3,9 +3,7 @@ module opendev.org/airship/kubernetes-entrypoint
 go 1.12
 
 require (
-	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/golangci/golangci-lint v1.17.1
-	github.com/google/btree v1.0.0 // indirect
+	github.com/golangci/golangci-lint v1.18.0
 	github.com/onsi/ginkgo v1.10.1
 	github.com/onsi/gomega v1.7.0
 	golang.org/x/time v0.0.0-20190921001708-c4c64cad1fd0 // indirect

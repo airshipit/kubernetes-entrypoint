@@ -13,20 +13,28 @@ const (
 )
 
 type Dependency struct {
-	Name      string
-	Namespace string
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
 }
 
 type PodDependency struct {
-	Labels          map[string]string
-	Namespace       string
-	RequireSameNode bool
+	Labels          map[string]string `json:"labels"`
+	Namespace       string            `json:"namespace"`
+	RequireSameNode bool              `json:"requireSameNode"`
 }
 
 type JobDependency struct {
-	Name      string
-	Labels    map[string]string
-	Namespace string
+	Name      string            `json:"name"`
+	Labels    map[string]string `json:"labels"`
+	Namespace string            `json:"namespace"`
+}
+
+type CustomResourceDependency struct {
+	APIVersion string              `json:"apiVersion"`
+	Name       string              `json:"name"`
+	Namespace  string              `json:"namespace"`
+	Kind       string              `json:"kind"`
+	Fields     []map[string]string `json:"fields"`
 }
 
 func SplitCommand() []string {
@@ -144,8 +152,8 @@ func SplitJobEnvToDeps(env string, jsonEnv string) []JobDependency {
 
 //GetBaseNamespace returns default namespace when user set empty one
 func GetBaseNamespace() string {
-	namespace := os.Getenv("NAMESPACE")
-	if namespace == "" {
+	namespace, isSet := os.LookupEnv("NAMESPACE")
+	if !isSet || namespace == "" {
 		namespace = "default"
 	}
 	return namespace
