@@ -1,13 +1,10 @@
-# This file contains all available configuration options
-# with their default values.
-
 # options for analysis running
 run:
   # default concurrency is a available CPU number
   concurrency: 4
 
   # timeout for analysis, e.g. 30s, 5m, default is 1m
-  deadline: 1m
+  deadline: 3m
 
   # exit code when at least one issue was found, default is 1
   issues-exit-code: 1
@@ -133,6 +130,7 @@ linters-settings:
     for-loops: false # Report preallocation suggestions on for loops, false by default
 
 linters:
+  disable-all: true
   enable:
     - dupl                 # Tool for code clone detection
     - goconst              # Finds repeated strings that could be replaced by a constant
