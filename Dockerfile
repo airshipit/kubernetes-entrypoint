@@ -14,5 +14,9 @@ RUN make ${MAKE_TARGET}
 
 FROM ${RELEASE_IMAGE} as release
 COPY --from=builder /usr/src/kubernetes-entrypoint/bin/kubernetes-entrypoint /usr/local/bin/kubernetes-entrypoint
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends coreutils
+
 USER 65534
 ENTRYPOINT [ "/usr/local/bin/kubernetes-entrypoint" ]
