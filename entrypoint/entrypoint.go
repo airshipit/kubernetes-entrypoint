@@ -6,7 +6,7 @@ import (
 
 	"k8s.io/client-go/rest"
 
-	cli "opendev.org/airship/kubernetes-entrypoint/client"
+	"opendev.org/airship/kubernetes-entrypoint/client"
 	"opendev.org/airship/kubernetes-entrypoint/logger"
 )
 
@@ -25,12 +25,12 @@ type Resolver interface {
 
 type EntrypointInterface interface {
 	Resolve()
-	Client() cli.ClientInterface
+	Client() client.ClientInterface
 }
 
 // Entrypoint is a main struct which checks dependencies
 type Entrypoint struct {
-	client    cli.ClientInterface
+	client    client.ClientInterface
 	namespace string
 }
 
@@ -45,7 +45,7 @@ func Register(res Resolver) {
 //New is a constructor for entrypoint
 func New(config *rest.Config) (entry *Entrypoint, err error) {
 	entry = new(Entrypoint)
-	client, err := cli.New(config)
+	client, err := client.New(config)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func New(config *rest.Config) (entry *Entrypoint, err error) {
 	return entry, err
 }
 
-func (e Entrypoint) Client() (client cli.ClientInterface) {
+func (e Entrypoint) Client() (client client.ClientInterface) {
 	return e.client
 }
 
@@ -69,7 +69,7 @@ func (e Entrypoint) Resolve() {
 			status := false
 			for !status {
 				if status, err = dep.IsResolved(e); err != nil {
-					logger.Warning.Printf("Resolving dependency %s failed: %v .", dep, err)
+					logger.Warning.Printf("Resolving dependency %+v failed: %v .", dep, err)
 				}
 				time.Sleep(resolverSleepInterval * time.Second)
 			}
