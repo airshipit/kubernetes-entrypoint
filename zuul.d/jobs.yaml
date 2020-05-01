@@ -15,3 +15,62 @@
     pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-lint-unit.yaml
     nodeset: airship-kubernetes-entrypoint-single-node
+
+- job:
+    name: airship-kubernetes-entrypoint-upload-git-mirror
+    parent: upload-git-mirror
+    description: Mirrors airship/kubernetes-entrypoint to airshipit/kubernetes-entrypoint
+    vars:
+      git_mirror_repository: airshipit/kubernetes-entrypoint
+    secrets:
+      - name: git_mirror_credentials
+        secret: airship-kubernetes-entrypoint-airshipit-github-secret
+        pass-to-parent: true
+
+- secret:
+    name: airship-kubernetes-entrypoint-airshipit-github-secret
+    data:
+      user: git
+      host: github.com
+      host_key: github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+      ssh_key: !encrypted/pkcs1-oaep
+        - e91i+An37DWcd7H6qUsoAEusDK/xZiMu7yyxDQPFQK8WR5u/dlai4OjvCypoKsS3lNHIL
+          FgWkB6DNOaoM94xc/qjmnP7J6wkJIaufpkbNwXgSouk+YsfA+8AT9+1DWmWYZ91TNasbj
+          qXavgtPLxCFkCkR06aUHAwsqy3MdsvEKmHJwxNOAHwTRrJGP+eqfAYDdHCrX0KeVWu0QW
+          vkUcB7q63OUCvV7sXaOSZfz5HDTX6pSsn43v4pXi3hS4L27ugu40K2yv6srYKGAcMbV/G
+          BqFKt1GWlgNQGGk0O0OxBd4gzsIQcntm+4Pe/Utd52dEg+rfFMccfGnhSmwRc4wscTIsW
+          yyToCV5GA65ONQawnoMJJNLj8Ddu8eymTMIiZ9rj3AJ4VBxxp0fnlkLgREcAvroFMOTin
+          Vzz9wtCOkN07PVaw3uuv7Pz3sTRtcqPGyhWKT+rlz5t3isM2Piz1Voo/Yn2WA1hQoxkhG
+          1LF+9gmr+1qXoEE++HoM5FTSkMZNyfMQZ5+smTveje/BH7PaR+dMud9M6hg9jDvk5LozR
+          wcC+OPkzieT+E7SYXKjApeO6VluN8drEm5RcM6fBqPSo8gLd4wsBSUlr9nIaLAS0WGKEX
+          kYsaNx8bupLRKHQDePrTGm9GaeE91yJYDxtnyxN/ya7qBpoGvg/W2p6Bu6BzQQ=
+        - f8eLV/8Ed0vHMSTRcqFwZybK/fKsDbizeSlvQxxR3W33A6+QB98/5ZjBJP+HIxgSmOs0G
+          WofG5+JOjFQvI5MLC6dwUV1Gb1Rxvxhe3vSGAcFox6gaPAv1fEQKKHRyVTeEThZOCBfuL
+          CV8DUOx3NSeYlhrljbbWbtIUeUhbff9eWbpGhuM66xTDK+U9Z4dKUeDGY3qusbVATEOpn
+          omyzPsugqHAXgmLVpUkYBvk9JRUI9BcldocRAtyXFrZW0u42e+aDw/lqr+YPPubfIsPpe
+          TbW+b9XRioUEEx9JOK+dOOOsm2BZYR5KTY7EZQzy6Xu9HHbMhFaBZ5XZRMGip6+am5Wxb
+          M1/zNpzUI+wCSFUQ6TA0bGTW3IzNUdOsr4M3NyVIViBqftF0A+kDUI2VqVaOV1kSFb47F
+          PLi4/ewgPvhW9SVoVmphS9K2pmA8V7t73JU1VZgiOpUOpMCJETiCXgUtkLbDz2/vI1Age
+          pQh7CzQPsW6kWDzaaebU5kXNqUYWgfHlzOan5ncikNz06AGcfBMQwUbfXFAaGmJtWL6Wd
+          ey9HTBPgw2Q/Lq6yRcX5Jk/+qXjxZrUeV7AU+L+sQPCErQuNVnU/4iZ5NLJLNMdVc3Vf+
+          sP13wMFfMUzbGYAbzluwosfIfC0ftqTLhR7tSzMXx/CoPP6ogkYn15q1SdZe4o=
+        - c3Ht5WCBaaaNWTCeU21hDxT5Fqk58B/lvl8smdNZ3HxgoIZ6kQ4s5G2g3rj1kSDwqm8U5
+          2f+Zve42CGb715eao8YN9I6TEUiTKE3mIhVQpYfllEGiPy1iVJCZtPpU7McwVj9/UV8uF
+          M0Aj0Rl0zNwzr4+vUk+2nsHAElmoJnLM82nxVs9jXRKk7Jwf83HpJ/h6wRHg4fRNUGQXH
+          ZZYbULYnolQGjZzCkxk4mw4ASCPIjJCJmP97cS2HEkd/PL4lY35YrFaIJeMuFyyIRVNLo
+          npcBohNQFuaTSbEciKfgQGckXMuRBj4bmt99JiutZzhAa6spB1pUwPj7QgRLztSLT81HY
+          jls2ZPIPEQza95UhmJlxQ4pNvpY77F55BE/RX5T/GU6/sjiowOX9C4pMiW3BEyl8EUFxf
+          HFjD3vuzwZZ8EvVqMp8ZJZFdyc9qgP25F3Twt/bcyZTrLGr47bim/pC2gc9/4d8MvBp1P
+          YoeAHRuQ7pEQbGObU+tHDw3zi0HMBzpu/WrKeE8KtIVPJemSrww4xFs2qwq6wllMfC8rx
+          J2v4Yu0xICjygFKT/4KDYdpaiqF+/9wG0UTCc0WQbKm8ic4hip5FLcpckiU7tocNIOUT9
+          gW0tuw3jHFowPMy2ML1TKHldyPBVvYc3vpVejfrRm/zsecnrM5NqUxh0Wou2Ko=
+        - ByEyX9OFUqjuX8cW3KoY1Lj7PlmCaJmFvHLobk4tUyHVQSgFea/3Fzj5W/mURxbWAimaj
+          ztjjZntMWeyh3KmYZCVTcAJrebnSTeBD9zkTdlzm9OCSTDzKJeBUcKbgeKqTIwUa9f6Ro
+          kJRqJP8aTx4sNBUSQJ23B5fbXfSCr0R3ohaDy099h2/oOln9wjD1+sbWiF31j1KkKc6y/
+          9/wVpjEmGqZHWPIo25ZUlm1SumYh0qi9XdjP3vRpE8EDLQH0d7v2jDOaqeJTNtdRYV/j1
+          Q8jZG6YR2fRRfMUwX6m931NCK9RS642K66w/OE5yeXAcEyth8uoGJ+p/9EoRXTnFvcSVt
+          cut2M76MrzhhVqBxN0wT/LNII9JYyS0VMUYYQWnp39gRwZDDrdjBB5ajxuzOJgQMFfhG9
+          sMRrqoEL4Zr5qDQvx0zhyxD+HUo5E8uBCufM5qoU6QQOO9UpV7WSgFLLWm5O8NLvkHc6R
+          xLqmax0E46uFKtWx1GoX03y8DgY0Oi2kba6yBMdQyQIMlPN0bDglatYcdILo64wyCs6/t
+          U1t+8FqML7wBzHp6qA1VuAJTFWS4ah1Md1N0CcEmPOUSABov5T/DYNK0u1XFteApt975o
+          iBZUJ15U0KtUbqQ6o6zngxT9zPYLdj0BK4kCb9loSAFeWN82iFDsacbYkxwqPU=

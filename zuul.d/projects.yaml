@@ -17,3 +17,6 @@
     gate:
       jobs:
         - airship-kubernetes-entrypoint-lint-unit
+    post:
+      jobs:
+        - airship-kubernetes-entrypoint-upload-git-mirror
