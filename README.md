@@ -1,10 +1,5 @@
 # Kubernetes Entrypoint
 
-[![Build Status](https://api.travis-ci.org/stackanetes/kubernetes-entrypoint.svg?branch=master "Build Status")](https://travis-ci.org/stackanetes/kubernetes-entrypoint)
-[![Container Repository on Quay](https://quay.io/repository/stackanetes/kubernetes-entrypoint/status "Container Repository on Quay")](https://quay.io/repository/stackanetes/kubernetes-entrypoint)
-[![Go Report Card](https://goreportcard.com/badge/stackanetes/kubernetes-entrypoint "Go Report Card")](https://goreportcard.com/report/stackanetes/kubernetes-entrypoint)
-
-
 ============
 
 Kubernetes-entrypoint enables complex deployments on top of Kubernetes.
@@ -124,8 +119,8 @@ Note also that `fields` is a list, meaning that multiple fields can be monitered
 ## Image
 
 Build process for image is triggered after each commit.
-Can be found [here](https://quay.io/repository/stackanetes/kubernetes-entrypoint?tab=tags), and pulled by executing:
-`docker pull quay.io/stackanetes/kubernetes-entrypoint:v0.1.0`
+Can be found [here](https://quay.io/repository/airshipit/kubernetes-entrypoint?tab=tags), and pulled by executing:
+`docker pull quay.io/airshipit/kubernetes-entrypoint:v0.1.0`
 
 ## Examples
 
