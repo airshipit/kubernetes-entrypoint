@@ -1,5 +1,5 @@
-ARG GO_IMAGE=docker.io/golang:1.12.6-stretch
-ARG RELEASE_IMAGE=scratch
+ARG GO_IMAGE=docker.io/golang:1.16.4-buster
+ARG RELEASE_IMAGE=ubuntu:focal
 FROM ${GO_IMAGE} as builder
 
 SHELL [ "/bin/bash", "-cex" ]
