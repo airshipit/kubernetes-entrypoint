@@ -1,8 +1,9 @@
 package entrypoint
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 
@@ -28,7 +29,7 @@ type dummyResolver struct {
 	namespace string
 }
 
-func (d dummyResolver) IsResolved(entry EntrypointInterface) (bool, error) {
+func (d dummyResolver) IsResolved(ctx context.Context, entry EntrypointInterface) (bool, error) {
 	return true, nil
 }
 func (d dummyResolver) GetName() (name string) {
@@ -103,7 +104,7 @@ var _ = Describe("Entrypoint", func() {
 		// Wait for resolver to finish
 		time.Sleep(5 * time.Second)
 
-		stdout, _ := ioutil.ReadAll(r)
+		stdout, _ := io.ReadAll(r)
 		resolvedString := fmt.Sprintf("%sResolving %v\n%sDependency %v is resolved.\n",
 			loggerInfoText, dummy, loggerInfoText, dummy)
 		Expect(string(stdout)).To(Equal(resolvedString))

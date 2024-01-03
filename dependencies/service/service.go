@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -35,8 +36,8 @@ func NewService(name string, namespace string) Service {
 
 }
 
-func (s Service) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
-	e, err := entrypoint.Client().Endpoints(s.namespace).Get(s.name, metav1.GetOptions{})
+func (s Service) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
+	e, err := entrypoint.Client().Endpoints(s.namespace).Get(ctx, s.name, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}

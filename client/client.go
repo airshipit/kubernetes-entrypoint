@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -21,7 +22,7 @@ type ClientInterface interface {
 	Endpoints(string) v1core.EndpointsInterface
 	DaemonSets(string) appsv1.DaemonSetInterface
 	Services(string) v1core.ServiceInterface
-	CustomResource(apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error)
+	CustomResource(ctx context.Context, apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error)
 }
 type Client struct {
 	client        kubernetes.Interface
@@ -47,7 +48,7 @@ func (c Client) Services(namespace string) v1core.ServiceInterface {
 	return c.client.CoreV1().Services(namespace)
 }
 
-func (c Client) CustomResource(apiVersion, kind, namespace, name string) (*unstructured.Unstructured, error) {
+func (c Client) CustomResource(ctx context.Context, apiVersion, kind, namespace, name string) (*unstructured.Unstructured, error) {
 	apiResourceList, err := c.client.Discovery().ServerResourcesForGroupVersion(apiVersion)
 	if err != nil {
 		return nil, err
@@ -70,10 +71,10 @@ func (c Client) CustomResource(apiVersion, kind, namespace, name string) (*unstr
 
 			return c.dynamicClient.Resource(gvr).
 				Namespace(namespace).
-				Get(name, metav1.GetOptions{})
+				Get(ctx, name, metav1.GetOptions{})
 		}
 	}
-	return nil, fmt.Errorf("Could not find resource with with version %v, "+
+	return nil, fmt.Errorf("could not find resource with with version %v, "+
 		"kind %v, and name %v in namespace %v",
 		apiVersion, kind, name, namespace)
 }

@@ -46,7 +46,7 @@ func SplitCommand() []string {
 	return commandList
 }
 
-//SplitEnvToDeps returns list of namespaces and names pairs
+// SplitEnvToDeps returns list of namespaces and names pairs
 func SplitEnvToDeps(env string) (envList []Dependency) {
 	separator := ","
 
@@ -79,7 +79,7 @@ func SplitEnvToDeps(env string) (envList []Dependency) {
 	return envList
 }
 
-//SplitPodEnvToDeps returns list of PodDependency
+// SplitPodEnvToDeps returns list of PodDependency
 func SplitPodEnvToDeps(env string) []PodDependency {
 	deps := []PodDependency{}
 
@@ -106,7 +106,7 @@ func SplitPodEnvToDeps(env string) []PodDependency {
 	return deps
 }
 
-//SplitJobEnvToDeps returns list of JobDependency
+// SplitJobEnvToDeps returns list of JobDependency
 func SplitJobEnvToDeps(env string, jsonEnv string) []JobDependency {
 	deps := []JobDependency{}
 
@@ -150,7 +150,7 @@ func SplitJobEnvToDeps(env string, jsonEnv string) []JobDependency {
 	return deps
 }
 
-//GetBaseNamespace returns default namespace when user set empty one
+// GetBaseNamespace returns default namespace when user set empty one
 func GetBaseNamespace() string {
 	namespace, isSet := os.LookupEnv("NAMESPACE")
 	if !isSet || namespace == "" {

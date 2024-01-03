@@ -1,6 +1,7 @@
 package container
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -14,8 +15,8 @@ import (
 )
 
 const (
-	PodNameNotSetError    = "Environment variable POD_NAME not set"
-	NamespaceNotSupported = "Container doesn't accept namespace"
+	PodNameNotSetError    = "environment variable POD_NAME not set"
+	NamespaceNotSupported = "container doesn't accept namespace"
 )
 
 type Container struct {
@@ -43,18 +44,18 @@ func NewContainer(name string) Container {
 
 }
 
-func (c Container) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
+func (c Container) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
 	myPodName := os.Getenv("POD_NAME")
 	if myPodName == "" {
 		return false, fmt.Errorf(PodNameNotSetError)
 	}
-	pod, err := entrypoint.Client().Pods(env.GetBaseNamespace()).Get(myPodName, metav1.GetOptions{})
+	pod, err := entrypoint.Client().Pods(env.GetBaseNamespace()).Get(ctx, myPodName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
 
 	if strings.Contains(c.name, env.Separator) {
-		return false, fmt.Errorf("Specifying namespace is not permitted")
+		return false, fmt.Errorf("specifying namespace is not permitted")
 	}
 	containers := pod.Status.ContainerStatuses
 	for _, container := range containers {

@@ -1,6 +1,7 @@
 package daemonset
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -47,7 +48,7 @@ var _ = Describe("Daemonset", func() {
 	It("checks resolution of a succeeding daemonset", func() {
 		daemonset, _ := NewDaemonset(mocks.SucceedingDaemonsetName, daemonsetNamespace)
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeTrue())
 		Expect(err).NotTo(HaveOccurred())
@@ -56,7 +57,7 @@ var _ = Describe("Daemonset", func() {
 	It("checks resolution failure of a daemonset with incorrect name", func() {
 		daemonset, _ := NewDaemonset(mocks.FailingDaemonsetName, daemonsetNamespace)
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeFalse())
 		Expect(err).To(HaveOccurred())
@@ -65,7 +66,7 @@ var _ = Describe("Daemonset", func() {
 	It("checks resolution failure of a daemonset with incorrect match labels", func() {
 		daemonset, _ := NewDaemonset(mocks.FailingMatchLabelsDaemonsetName, daemonsetNamespace)
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeFalse())
 		Expect(err).To(HaveOccurred())
@@ -76,7 +77,7 @@ var _ = Describe("Daemonset", func() {
 		os.Setenv(PodNameEnvVar, mocks.PodNotPresent)
 		daemonset, _ := NewDaemonset(mocks.FailingMatchLabelsDaemonsetName, daemonsetNamespace)
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeFalse())
 		Expect(err).To(HaveOccurred())
@@ -85,7 +86,7 @@ var _ = Describe("Daemonset", func() {
 	It("checks resolution failure of a daemonset with none of the pods with Ready status", func() {
 		daemonset, _ := NewDaemonset(mocks.NotReadyMatchLabelsDaemonsetName, daemonsetNamespace)
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeFalse())
 		Expect(err).To(HaveOccurred())
@@ -97,7 +98,7 @@ var _ = Describe("Daemonset", func() {
 		Expect(daemonset).NotTo(BeNil())
 		Expect(err).NotTo(HaveOccurred())
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeTrue())
 		Expect(err).NotTo(HaveOccurred())
@@ -110,7 +111,7 @@ var _ = Describe("Daemonset", func() {
 		Expect(daemonset).NotTo(BeNil())
 		Expect(err).NotTo(HaveOccurred())
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(BeFalse())
 		Expect(err).To(HaveOccurred())
@@ -123,7 +124,7 @@ var _ = Describe("Daemonset", func() {
 		err = os.Setenv(PodNameEnvVar, "shouldwork")
 		Expect(err).NotTo(HaveOccurred())
 
-		isResolved, err := daemonset.IsResolved(testEntrypoint)
+		isResolved, err := daemonset.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(err).NotTo(HaveOccurred())
 		Expect(isResolved).To(BeTrue())

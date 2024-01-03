@@ -1,6 +1,7 @@
 package entrypoint
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -18,9 +19,9 @@ const (
 	resolverSleepInterval = 2
 )
 
-//Resolver is an interface which all dependencies should implement
+// Resolver is an interface which all dependencies should implement
 type Resolver interface {
-	IsResolved(entrypoint EntrypointInterface) (bool, error)
+	IsResolved(ctx context.Context, entrypoint EntrypointInterface) (bool, error)
 }
 
 type EntrypointInterface interface {
@@ -34,7 +35,7 @@ type Entrypoint struct {
 	namespace string
 }
 
-//Register is a function which registers new dependencies
+// Register is a function which registers new dependencies
 func Register(res Resolver) {
 	if res == nil {
 		panic("Entrypoint: could not register nil Resolver")
@@ -42,7 +43,7 @@ func Register(res Resolver) {
 	dependencies = append(dependencies, res)
 }
 
-//New is a constructor for entrypoint
+// New is a constructor for entrypoint
 func New(config *rest.Config) (entry *Entrypoint, err error) {
 	entry = new(Entrypoint)
 	client, err := client.New(config)
@@ -57,8 +58,9 @@ func (e Entrypoint) Client() (client client.ClientInterface) {
 	return e.client
 }
 
-//Resolve is a main loop which iterates through all dependencies and resolves them
+// Resolve is a main loop which iterates through all dependencies and resolves them
 func (e Entrypoint) Resolve() {
+	ctx := context.Background()
 	var wg sync.WaitGroup
 	for _, dep := range dependencies {
 		wg.Add(1)
@@ -68,7 +70,7 @@ func (e Entrypoint) Resolve() {
 			var err error
 			status := false
 			for !status {
-				if status, err = dep.IsResolved(e); err != nil {
+				if status, err = dep.IsResolved(ctx, e); err != nil {
 					logger.Warning.Printf("Resolving dependency %+v failed: %v .", dep, err)
 				}
 				time.Sleep(resolverSleepInterval * time.Second)

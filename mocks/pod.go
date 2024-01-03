@@ -1,15 +1,18 @@
 package mocks
 
 import (
+	"context"
 	"fmt"
 
 	v1 "k8s.io/api/core/v1"
-	policy "k8s.io/api/policy/v1beta1"
+	policyv1 "k8s.io/api/policy/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
+	corev1applyconfigurations "k8s.io/client-go/applyconfigurations/core/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
-	rest "k8s.io/client-go/rest"
+	restclient "k8s.io/client-go/rest"
 )
 
 const MockContainerName = "TEST_CONTAINER"
@@ -29,9 +32,29 @@ const (
 	NoPodsMatchLabel                = "NO_PODS"
 )
 
-func (p pClient) Get(name string, opts metav1.GetOptions) (*v1.Pod, error) {
+func (p pClient) Create(ctx context.Context, pod *v1.Pod, opts metav1.CreateOptions) (*v1.Pod, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (p pClient) Update(ctx context.Context, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (p pClient) UpdateStatus(ctx context.Context, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (p pClient) Delete(ctx context.Context, name string, opts metav1.DeleteOptions) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) Get(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Pod, error) {
 	if name == PodNotPresent {
-		return nil, fmt.Errorf("Could not get pod with the name %s", name)
+		return nil, fmt.Errorf("could not get pod with the name %s", name)
 	}
 
 	return &v1.Pod{
@@ -46,22 +69,10 @@ func (p pClient) Get(name string, opts metav1.GetOptions) (*v1.Pod, error) {
 			HostIP: "127.0.0.1",
 		},
 	}, nil
-
-}
-func (p pClient) Create(pod *v1.Pod) (*v1.Pod, error) {
-	return nil, fmt.Errorf("Not implemented")
 }
 
-func (p pClient) Delete(name string, options *metav1.DeleteOptions) error {
-	return fmt.Errorf("Not implemented")
-}
-
-func (p pClient) DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error {
-	return fmt.Errorf("Not implemented")
-}
-
-func (p pClient) List(options metav1.ListOptions) (*v1.PodList, error) {
-	if options.LabelSelector == fmt.Sprintf("name=%s", FailingMatchLabel) {
+func (p pClient) List(ctx context.Context, opts metav1.ListOptions) (*v1.PodList, error) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", FailingMatchLabel) {
 		return nil, fmt.Errorf("Client received incorrect pod label names")
 	}
 
@@ -72,22 +83,22 @@ func (p pClient) List(options metav1.ListOptions) (*v1.PodList, error) {
 
 	var pods []v1.Pod
 
-	if options.LabelSelector == fmt.Sprintf("name=%s", SameHostNotReadyMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", SameHostNotReadyMatchLabel) {
 		pods = []v1.Pod{notReadyPodSameHost}
 	}
-	if options.LabelSelector == fmt.Sprintf("name=%s", SameHostReadyMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", SameHostReadyMatchLabel) {
 		pods = []v1.Pod{readyPodSameHost, notReadyPodDifferentHost}
 	}
-	if options.LabelSelector == fmt.Sprintf("name=%s", SameHostSomeReadyMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", SameHostSomeReadyMatchLabel) {
 		pods = []v1.Pod{readyPodSameHost, notReadyPodSameHost}
 	}
-	if options.LabelSelector == fmt.Sprintf("name=%s", DifferentHostReadyMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", DifferentHostReadyMatchLabel) {
 		pods = []v1.Pod{notReadyPodSameHost, readyPodDifferentHost}
 	}
-	if options.LabelSelector == fmt.Sprintf("name=%s", DifferentHostNotReadyMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", DifferentHostNotReadyMatchLabel) {
 		pods = []v1.Pod{notReadyPodDifferentHost}
 	}
-	if options.LabelSelector == fmt.Sprintf("name=%s", NoPodsMatchLabel) {
+	if opts.LabelSelector == fmt.Sprintf("name=%s", NoPodsMatchLabel) {
 		pods = []v1.Pod{}
 	}
 
@@ -96,43 +107,48 @@ func (p pClient) List(options metav1.ListOptions) (*v1.PodList, error) {
 	}, nil
 }
 
-func (p pClient) Update(pod *v1.Pod) (*v1.Pod, error) {
-	return nil, fmt.Errorf("Not implemented")
+func (p pClient) Watch(ctx context.Context, opts metav1.ListOptions) (watch.Interface, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) UpdateStatus(pod *v1.Pod) (*v1.Pod, error) {
-	return nil, fmt.Errorf("Not implemented")
+func (p pClient) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (result *v1.Pod, err error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Watch(options metav1.ListOptions) (watch.Interface, error) {
-	return nil, fmt.Errorf("Not implemented")
+func (p pClient) Apply(ctx context.Context, pod *corev1applyconfigurations.PodApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Pod, err error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Bind(binding *v1.Binding) error {
-	return fmt.Errorf("Not implemented")
+func (p pClient) ApplyStatus(ctx context.Context, pod *corev1applyconfigurations.PodApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Pod, err error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Evict(eviction *policy.Eviction) error {
-	return fmt.Errorf("Not implemented")
+func (p pClient) UpdateEphemeralContainers(ctx context.Context, podName string, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) GetLogs(name string, opts *v1.PodLogOptions) *rest.Request {
+func (p pClient) Bind(ctx context.Context, binding *v1.Binding, opts metav1.CreateOptions) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) Evict(ctx context.Context, eviction *policyv1beta1.Eviction) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) EvictV1(ctx context.Context, eviction *policyv1.Eviction) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) EvictV1beta1(ctx context.Context, eviction *policyv1beta1.Eviction) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (p pClient) GetLogs(name string, opts *v1.PodLogOptions) *restclient.Request {
 	return nil
 }
 
-func (p pClient) Patch(name string, pt types.PatchType, data []byte,
-	subresources ...string) (result *v1.Pod, err error) {
-	return nil, fmt.Errorf("Not implemented")
-}
-
-func (p pClient) GetEphemeralContainers(podName string,
-	options metav1.GetOptions) (*v1.EphemeralContainers, error) {
-	return nil, fmt.Errorf("Not implemented")
-}
-
-func (p pClient) UpdateEphemeralContainers(podName string,
-	ephemeralContainers *v1.EphemeralContainers) (*v1.EphemeralContainers, error) {
-	return nil, fmt.Errorf("Not implemented")
+func (p pClient) ProxyGet(scheme, name, port, path string, params map[string]string) restclient.ResponseWrapper {
+	return nil
 }
 
 func NewPClient() v1core.PodInterface {

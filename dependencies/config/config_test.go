@@ -1,8 +1,8 @@
 package config
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -58,7 +58,7 @@ func setupConfigTemplate(templatePath string) error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(templatePath, configContent, 0644); err != nil {
+	if err := os.WriteFile(templatePath, configContent, 0644); err != nil {
 		return err
 	}
 
@@ -114,10 +114,10 @@ var _ = Describe("Config", func() {
 
 	It("checks the format of a newly created config file", func() {
 		config, _ := NewConfig(testConfigPath, templatePrefix)
-		_, err := config.IsResolved(testEntrypoint)
+		_, err := config.IsResolved(context.TODO(), testEntrypoint)
 		Expect(err).NotTo(HaveOccurred())
 
-		result, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", testDir, testConfigName))
+		result, err := os.ReadFile(fmt.Sprintf("%s/%s", testDir, testConfigName))
 		Expect(err).NotTo(HaveOccurred())
 
 		hostname, err := os.Hostname()
@@ -132,7 +132,7 @@ var _ = Describe("Config", func() {
 	It("checks resolution of a config", func() {
 		config, _ := NewConfig(testConfigPath, templatePrefix)
 
-		isResolved, err := config.IsResolved(testEntrypoint)
+		isResolved, err := config.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())

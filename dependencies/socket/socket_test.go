@@ -1,8 +1,8 @@
 package socket
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -40,7 +40,7 @@ var _ = Describe("Socket", func() {
 		testEntrypoint = mocks.NewEntrypoint()
 
 		var err error
-		testDir, err = ioutil.TempDir("", tempPathSuffix)
+		testDir, err = os.MkdirTemp("", tempPathSuffix)
 		Expect(err).NotTo(HaveOccurred())
 
 		existingSocketPath = filepath.Join(testDir, existingSocket)
@@ -64,7 +64,7 @@ var _ = Describe("Socket", func() {
 	It("resolves an existing socket socket", func() {
 		socket := NewSocket(existingSocketPath)
 
-		isResolved, err := socket.IsResolved(testEntrypoint)
+		isResolved, err := socket.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())
@@ -73,7 +73,7 @@ var _ = Describe("Socket", func() {
 	It("fails on trying to resolve a nonexisting socket", func() {
 		socket := NewSocket(nonExistingSocketPath)
 
-		isResolved, err := socket.IsResolved(testEntrypoint)
+		isResolved, err := socket.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
 		Expect(err).To(HaveOccurred())

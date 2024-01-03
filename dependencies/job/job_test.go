@@ -1,6 +1,7 @@
 package job
 
 import (
+	"context"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -45,7 +46,7 @@ var _ = Describe("Job", func() {
 	It("checks resolution of a succeeding job by name", func() {
 		job := NewJob(mocks.SucceedingJobName, mocks.SucceedingJobName, nil)
 
-		isResolved, err := job.IsResolved(testEntrypoint)
+		isResolved, err := job.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())
@@ -54,7 +55,7 @@ var _ = Describe("Job", func() {
 	It("checks resolution failure of a failing job by name", func() {
 		job := NewJob(mocks.FailingJobName, mocks.FailingJobName, nil)
 
-		isResolved, err := job.IsResolved(testEntrypoint)
+		isResolved, err := job.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
 		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, job)))
@@ -63,7 +64,7 @@ var _ = Describe("Job", func() {
 	It("checks resolution of a succeeding job by labels", func() {
 		job := NewJob("", mocks.SucceedingJobName, map[string]string{"name": mocks.SucceedingJobLabel})
 
-		isResolved, err := job.IsResolved(testEntrypoint)
+		isResolved, err := job.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())
@@ -72,7 +73,7 @@ var _ = Describe("Job", func() {
 	It("checks resolution failure of a failing job by labels", func() {
 		job := NewJob("", mocks.FailingJobName, map[string]string{"name": mocks.FailingJobLabel})
 
-		isResolved, err := job.IsResolved(testEntrypoint)
+		isResolved, err := job.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
 		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, job)))

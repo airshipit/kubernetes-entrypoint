@@ -1,6 +1,8 @@
 package mocks
 
 import (
+	"context"
+
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	v1apps "k8s.io/client-go/kubernetes/typed/apps/v1"
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
@@ -38,7 +40,7 @@ func (c Client) Jobs(namespace string) v1batch.JobInterface {
 	return c.JobInterface
 }
 
-func (c Client) CustomResource(apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error) {
+func (c Client) CustomResource(ctx context.Context, apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error) {
 	return c.FakeCustomResource, c.Err
 }
 

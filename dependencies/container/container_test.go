@@ -1,6 +1,7 @@
 package container
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -36,7 +37,7 @@ var _ = Describe("Container", func() {
 		os.Unsetenv(podEnvVariableName)
 		container := NewContainer(mocks.MockContainerName)
 
-		isResolved, err := container.IsResolved(testEntrypoint)
+		isResolved, err := container.IsResolved(context.TODO(), testEntrypoint)
 		Expect(isResolved).To(Equal(false))
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(Equal(PodNameNotSetError))
@@ -45,7 +46,7 @@ var _ = Describe("Container", func() {
 	It("checks resolution of a succeeding container", func() {
 		container := NewContainer(mocks.MockContainerName)
 
-		isResolved, err := container.IsResolved(testEntrypoint)
+		isResolved, err := container.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())
@@ -59,7 +60,7 @@ var _ = Describe("Container", func() {
 		Expect(container).NotTo(Equal(nil))
 
 		var isResolved bool
-		isResolved, err = container.IsResolved(testEntrypoint)
+		isResolved, err = container.IsResolved(context.TODO(), testEntrypoint)
 		Expect(isResolved).To(Equal(false))
 		Expect(err).To(BeNil())
 	})

@@ -1,6 +1,7 @@
 package customresource
 
 import (
+	"context"
 	"errors"
 	"os"
 	"reflect"
@@ -288,7 +289,7 @@ func TestIsResolved(t *testing.T) {
 			ep := mocks.NewEntrypoint()
 			ep.MockClient.FakeCustomResource = tt.customResource
 			ep.MockClient.Err = tt.clientErr
-			result, err := tt.resolver.IsResolved(ep)
+			result, err := tt.resolver.IsResolved(context.TODO(), ep)
 			if err != nil {
 				if !tt.expectErr {
 					t.Fatalf("Unexpected error: %s", err.Error())

@@ -1,6 +1,7 @@
 package job
 
 import (
+	"context"
 	"fmt"
 
 	v1 "k8s.io/api/batch/v1"
@@ -11,7 +12,7 @@ import (
 	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
-const FailingStatusFormat = "Job %s is not completed yet"
+const FailingStatusFormat = "job %s is not completed yet"
 
 type Job struct {
 	name      string
@@ -46,12 +47,12 @@ func NewJob(name string, namespace string, labels map[string]string) *Job {
 	}
 }
 
-func (j Job) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
+func (j Job) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
 	iface := entrypoint.Client().Jobs(j.namespace)
 	var jobs []v1.Job
 
 	if j.name != "" {
-		job, err := iface.Get(j.name, metav1.GetOptions{})
+		job, err := iface.Get(ctx, j.name, metav1.GetOptions{})
 		if err != nil {
 			return false, err
 		}
@@ -60,14 +61,14 @@ func (j Job) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 		labelSelector := &metav1.LabelSelector{MatchLabels: j.labels}
 		label := metav1.FormatLabelSelector(labelSelector)
 		opts := metav1.ListOptions{LabelSelector: label}
-		jobList, err := iface.List(opts)
+		jobList, err := iface.List(ctx, opts)
 		if err != nil {
 			return false, err
 		}
 		jobs = jobList.Items
 	}
 	if len(jobs) == 0 {
-		return false, fmt.Errorf("No matching jobs found: %v", j)
+		return false, fmt.Errorf("no matching jobs found: %v", j)
 	}
 
 	for _, job := range jobs {

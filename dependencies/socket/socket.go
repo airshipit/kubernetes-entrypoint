@@ -1,6 +1,7 @@
 package socket
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -12,8 +13,8 @@ import (
 
 const (
 	NonExistingErrorFormat = "%s doesn't exists"
-	NoPermsErrorFormat     = "I have no permission to %s"
-	NamespaceNotSupported  = "Socket doesn't accept namespace"
+	NoPermsErrorFormat     = "no permission to %s"
+	NamespaceNotSupported  = "socket doesn't accept namespace"
 )
 
 type Socket struct {
@@ -39,7 +40,7 @@ func NewSocket(name string) Socket {
 	return Socket{name: name}
 }
 
-func (s Socket) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
+func (s Socket) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
 	_, err := os.Stat(s.name)
 	if err == nil {
 		return true, nil

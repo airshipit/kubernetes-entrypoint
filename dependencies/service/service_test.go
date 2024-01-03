@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -31,7 +32,7 @@ var _ = Describe("Service", func() {
 	It("checks resolution of a succeeding service", func() {
 		service := NewService(mocks.SucceedingServiceName, mocks.SucceedingServiceName)
 
-		isResolved, err := service.IsResolved(testEntrypoint)
+		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(true))
 		Expect(err).NotTo(HaveOccurred())
@@ -40,7 +41,7 @@ var _ = Describe("Service", func() {
 	It("checks resolution failure of a failing service", func() {
 		service := NewService(mocks.FailingServiceName, mocks.FailingServiceName)
 
-		isResolved, err := service.IsResolved(testEntrypoint)
+		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
 		Expect(err.Error()).To(Equal(mocks.MockEndpointError))
@@ -49,7 +50,7 @@ var _ = Describe("Service", func() {
 	It("checks resolution failure of a succeeding service with removed subsets", func() {
 		service := NewService(mocks.EmptySubsetsServiceName, mocks.EmptySubsetsServiceName)
 
-		isResolved, err := service.IsResolved(testEntrypoint)
+		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 		Expect(isResolved).To(Equal(false))
 		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, service.name)))
 	})

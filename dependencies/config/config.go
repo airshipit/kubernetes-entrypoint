@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -50,12 +51,12 @@ func init() {
 func NewConfig(name string, prefix string) (*Config, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		return nil, fmt.Errorf("Cannot determine hostname: %v", err)
+		return nil, fmt.Errorf("cannot determine hostname: %v", err)
 	}
 
 	ip, err := util.GetIp()
 	if err != nil {
-		return nil, fmt.Errorf("Cannot get ip address: %v", err)
+		return nil, fmt.Errorf("cannot get ip address: %v", err)
 	}
 
 	return &Config{
@@ -68,13 +69,13 @@ func NewConfig(name string, prefix string) (*Config, error) {
 	}, nil
 }
 
-func (c Config) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
+func (c Config) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
 	//Create directory to ensure it exists
 	if err := createDirectory(c.name); err != nil {
-		return false, fmt.Errorf("Couldn't create directory: %v", err)
+		return false, fmt.Errorf("couldn't create directory: %v", err)
 	}
 	if err := c.createAndTemplateConfig(); err != nil {
-		return false, fmt.Errorf("Cannot template %s: %v", c.name, err)
+		return false, fmt.Errorf("cannot template %s: %v", c.name, err)
 	}
 	return true, nil
 

@@ -1,6 +1,7 @@
 package pod
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -14,7 +15,7 @@ import (
 
 const (
 	PodNameEnvVar            = "POD_NAME"
-	PodNameNotSetErrorFormat = "Env POD_NAME not set. Pod dependency in namespace %s will be ignored!"
+	PodNameNotSetErrorFormat = "env POD_NAME not set, pod dependency in namespace %s will be ignored"
 )
 
 type Pod struct {
@@ -49,10 +50,10 @@ func NewPod(labels map[string]string, namespace string, requireSameNode bool) (*
 	}, nil
 }
 
-func (p Pod) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
-	myPod, err := entrypoint.Client().Pods(env.GetBaseNamespace()).Get(p.podName, metav1.GetOptions{})
+func (p Pod) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
+	myPod, err := entrypoint.Client().Pods(env.GetBaseNamespace()).Get(ctx, p.podName, metav1.GetOptions{})
 	if err != nil {
-		return false, fmt.Errorf("Getting POD: %v failed : %v", p.podName, err)
+		return false, fmt.Errorf("getting POD: %v failed : %v", p.podName, err)
 	}
 	myHost := myPod.Status.HostIP
 
@@ -60,14 +61,14 @@ func (p Pod) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 	label := metav1.FormatLabelSelector(labelSelector)
 	opts := metav1.ListOptions{LabelSelector: label}
 
-	matchingPodList, err := entrypoint.Client().Pods(p.namespace).List(opts)
+	matchingPodList, err := entrypoint.Client().Pods(p.namespace).List(ctx, opts)
 	if err != nil {
 		return false, err
 	}
 
 	matchingPods := matchingPodList.Items
 	if len(matchingPods) == 0 {
-		return false, fmt.Errorf("Found no pods matching labels: %v", p.labels)
+		return false, fmt.Errorf("found no pods matching labels: %v", p.labels)
 	}
 
 	podCount := 0
@@ -86,9 +87,9 @@ func (p Pod) IsResolved(entrypoint entry.EntrypointInterface) (bool, error) {
 		onHostClause = " on host"
 	}
 	if podCount == 0 {
-		return false, fmt.Errorf("Found no pods%v matching labels: %v", onHostClause, p.labels)
+		return false, fmt.Errorf("found no pods%v matching labels: %v", onHostClause, p.labels)
 	} else {
-		return false, fmt.Errorf("Found %v pods%v, but none ready, matching labels: %v", podCount, onHostClause, p.labels)
+		return false, fmt.Errorf("found %v pods%v, but none ready, matching labels: %v", podCount, onHostClause, p.labels)
 	}
 }
 
