@@ -14,9 +14,12 @@
     check:
       jobs:
         - airship-kubernetes-entrypoint-lint-unit
+        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
     gate:
       jobs:
         - airship-kubernetes-entrypoint-lint-unit
+        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
     post:
       jobs:
         - airship-kubernetes-entrypoint-upload-git-mirror
+        - airship-kubernetes-entrypoint-docker-publish-ubuntu_focal

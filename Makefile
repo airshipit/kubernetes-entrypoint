@@ -34,6 +34,14 @@ docker-image:
 		--build-arg GO_IMAGE=$(DOCKER_BASE_IMAGE) \
 		--build-arg RELEASE_IMAGE=$(DOCKER_RELEASE_IMAGE)
 
+check-docker:
+	@if [ -z $$(which docker) ]; then \
+		echo "Missing \`docker\` client which is required for development"; \
+		exit 2; \
+	fi
+
+images: check-docker docker-image
+
 .PHONY: docker-image-unit-tests
 docker-image-unit-tests: DOCKER_MAKE_TARGET = unit-tests
 docker-image-unit-tests: DOCKER_TARGET_STAGE = builder

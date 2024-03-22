@@ -14,7 +14,65 @@
     name: airship-kubernetes-entrypoint-lint-unit
     pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-lint-unit.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node
+    nodeset: airship-kubernetes-entrypoint-single-node-focal
+
+- job:
+    name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
+    timeout: 3600
+    run: playbooks/docker-image-build.yaml
+    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    vars:
+      publish: false
+      distro: ubuntu_focal
+      tags:
+        dynamic:
+          patch_set: true
+
+
+- job:
+    name: airship-kubernetes-entrypoint-docker-publish-ubuntu_focal
+    timeout: 3600
+    run: playbooks/docker-image-build.yaml
+    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    secrets:
+      - airship_kubernetes_entrypoint_quay_creds
+    vars:
+      publish: true
+      distro: ubuntu_focal
+      tags:
+        dynamic:
+          branch: true
+          commit: true
+        static:
+          - latest
+
+
+- secret:
+    name: airship_kubernetes_entrypoint_quay_creds
+    data:
+      username: !encrypted/pkcs1-oaep
+        - HXlskpNADDS4ySqBPLKRTZQ/Ti8bvGuSOOx09Qt74MGewp30XMg3+0tyGJPFvlAQ6xTD+
+          y1Gv/mf6X1/PabyA6ceASqs0CMs3lZ13NvTkgbo04lEogVqkrh5OaHLdPhu/4O4HHJ+lK
+          uYXk2dqarknT7RSVF/VJqv0Q4whBexSUEOkPc5dRw8rLwPw+Um4Cs7ktLRhCk3Czmr4Gp
+          NT2rCLPkySUQ9novI7UNNABXkZS57e+nFmu0AkCPLBfm6NYlKPWsBXBCemc/K7sR3duoe
+          h8kk0M2pe0+TvYfkfaq6zqBQJ7dK8VbdGpRlKScfNtS8XxDIqqEWibC0Q4gPY3f8PGnC0
+          72bMIXvGxwDY+IEcgoZtTVT3ENXgwe6ZsG2+bXUMYe3C/D7AYY2v/Z5Tk94blZkxno/3r
+          ABNOVUZ4NqOG7jwqxW7mPTFrjGFk6zWaBT19P9SgC0NB9IOWun/Y9BTUlaJQJXrrbiAy8
+          CiGpefhPh8WpUAD0t4lzPNncmojhUwxUCQPPpfDd377QoullvlNupOynZnIACgUOYMit8
+          60yYnJGh6+Fge28X69hbR+kQQoSCwQVV8HZ8+sGq6GNGxA2x6kz6fbhmIubomOobJJUyK
+          l+b5t4LK6GuTM4C++EcZwGVmPoCcOdI9ymmh0B37QJK6p/YQUgIUP8DCPngQtg=
+      password: !encrypted/pkcs1-oaep
+        - EB8J3+d+e1fMv+er9ioQc/rU9v6N3vFh+iCfRY2Kt0HsvAQ5hS8VmnPy0goaq7YA6pbls
+          DRnRooA4pbAQtqz8imRF+CepFUyLjjZYW1JvDiGcE8JmQWl8wNV2Q9qZ4NvzrINMs6xYX
+          3sWBl23gG37BrgH9igajXipSMa1eRbHPdk12gt2Ky2ownGbJna7I2BvqwnH3sRZ58uhwu
+          e6SAkur9qM0guEXVG+cfg9FIwMsJ5/r985bvZ1JTktsglME5kEC8bkgIed7gq+E70jYfl
+          Cz9VHXEqQkBu4ZlSMvWPdH1C7vuZuafN9gKkFf0t+fhV8RmoVGrWcdCvkaO0TQb2QkFGT
+          Q5BvU1OdhZ3kKa8Kwd0z3mJjLk8xC3hCVe/B0HolHi7ISWfUopMNGakmrlSZJLVSrbCfK
+          DkAg6AOabrNkg/nJszv8ImL5BBFELBDfNKjBZCZOOR0blNFbzgHyh39pSTE/1t6j3uW/i
+          KR10eP8QkQiRoSTfbxhTxRxXUofLPBdsu1FSs/Cx9nv527urVN0e0dh15IZ2VAofxUTwF
+          /PyCh5RtrZtpJqi5BBGUPSPSWoqP9L+FkY2ZZLad0KqTC8FYMIC+p9bfO+t7RNyJSVzxx
+          +8/nuoWfSPgBJpd6Og1KGs2n9tt5adOLALZoj96hz8zYKHrqDdWMPWOVmDSycY=
+
 
 - job:
     name: airship-kubernetes-entrypoint-upload-git-mirror
