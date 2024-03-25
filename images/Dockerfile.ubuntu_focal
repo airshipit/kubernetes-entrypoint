@@ -1,6 +1,8 @@
-ARG GO_IMAGE=docker.io/golang:1.16.4-buster
 ARG FROM=ubuntu:20.04
-FROM ${GO_IMAGE} as builder
+# Build the manager binary
+FROM golang:1.12.6-stretch as builder
+ARG TARGETOS
+ARG TARGETARCH
 
 SHELL [ "/bin/bash", "-cex" ]
 ADD . /usr/src/kubernetes-entrypoint
