@@ -19,7 +19,6 @@ const (
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Container", func() {
-
 	BeforeEach(func() {
 		err := os.Setenv(podEnvVariableName, mocks.PodEnvVariableValue)
 		Expect(err).NotTo(HaveOccurred())

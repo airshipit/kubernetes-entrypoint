@@ -33,7 +33,6 @@ func NewService(name string, namespace string) Service {
 		name:      name,
 		namespace: namespace,
 	}
-
 }
 
 func (s Service) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {

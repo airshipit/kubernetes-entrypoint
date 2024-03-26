@@ -40,7 +40,10 @@ func (c Client) Jobs(namespace string) v1batch.JobInterface {
 	return c.JobInterface
 }
 
-func (c Client) CustomResource(ctx context.Context, apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error) {
+func (c Client) CustomResource(
+	ctx context.Context,
+	apiVersion, namespace, resource, name string,
+) (*unstructured.Unstructured, error) {
 	return c.FakeCustomResource, c.Err
 }
 

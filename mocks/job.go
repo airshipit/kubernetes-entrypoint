@@ -19,18 +19,29 @@ const (
 	FailingJobLabel    = "fail"
 )
 
-type jClient struct {
-}
+type jClient struct{}
 
-func (j jClient) Create(ctx context.Context, job *v1.Job, opts metav1.CreateOptions) (*v1.Job, error) {
+func (j jClient) Create(
+	ctx context.Context,
+	job *v1.Job,
+	opts metav1.CreateOptions,
+) (*v1.Job, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (j jClient) Update(ctx context.Context, job *v1.Job, opts metav1.UpdateOptions) (*v1.Job, error) {
+func (j jClient) Update(
+	ctx context.Context,
+	job *v1.Job,
+	opts metav1.UpdateOptions,
+) (*v1.Job, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (j jClient) UpdateStatus(ctx context.Context, job *v1.Job, opts metav1.UpdateOptions) (*v1.Job, error) {
+func (j jClient) UpdateStatus(
+	ctx context.Context,
+	job *v1.Job,
+	opts metav1.UpdateOptions,
+) (*v1.Job, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -38,7 +49,11 @@ func (j jClient) Delete(ctx context.Context, name string, opts metav1.DeleteOpti
 	return fmt.Errorf("not implemented")
 }
 
-func (j jClient) DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+func (j jClient) DeleteCollection(
+	ctx context.Context,
+	opts metav1.DeleteOptions,
+	listOpts metav1.ListOptions,
+) error {
 	return fmt.Errorf("not implemented")
 }
 
@@ -77,15 +92,30 @@ func (j jClient) Watch(ctx context.Context, opts metav1.ListOptions) (watch.Inte
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (j jClient) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (result *v1.Job, err error) {
+func (j jClient) Patch(
+	ctx context.Context,
+	name string,
+	pt types.PatchType,
+	data []byte,
+	opts metav1.PatchOptions,
+	subresources ...string,
+) (result *v1.Job, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (j jClient) Apply(ctx context.Context, job *batchv1applyconfigurations.JobApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Job, err error) {
+func (j jClient) Apply(
+	ctx context.Context,
+	job *batchv1applyconfigurations.JobApplyConfiguration,
+	opts metav1.ApplyOptions,
+) (result *v1.Job, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (j jClient) ApplyStatus(ctx context.Context, job *batchv1applyconfigurations.JobApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Job, err error) {
+func (j jClient) ApplyStatus(
+	ctx context.Context,
+	job *batchv1applyconfigurations.JobApplyConfiguration,
+	opts metav1.ApplyOptions,
+) (result *v1.Job, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 

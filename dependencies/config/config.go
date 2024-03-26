@@ -64,13 +64,14 @@ func NewConfig(name string, prefix string) (*Config, error) {
 		params: configParams{
 			IP:        ip,
 			IP_ERLANG: strings.Replace(ip, ".", ",", -1),
-			HOSTNAME:  hostname},
+			HOSTNAME:  hostname,
+		},
 		prefix: prefix,
 	}, nil
 }
 
 func (c Config) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
-	//Create directory to ensure it exists
+	// Create directory to ensure it exists
 	if err := createDirectory(c.name); err != nil {
 		return false, fmt.Errorf("couldn't create directory: %v", err)
 	}
@@ -78,7 +79,6 @@ func (c Config) IsResolved(ctx context.Context, entrypoint entry.EntrypointInter
 		return false, fmt.Errorf("cannot template %s: %v", c.name, err)
 	}
 	return true, nil
-
 }
 
 func (c Config) createAndTemplateConfig() error {
@@ -100,7 +100,7 @@ func getSrcConfig(prefix string, config string) (srcConfig string) {
 }
 
 func createDirectory(file string) error {
-	return os.MkdirAll(filepath.Dir(file), 0755)
+	return os.MkdirAll(filepath.Dir(file), 0o755)
 }
 
 func (c Config) String() string {

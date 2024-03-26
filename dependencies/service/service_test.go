@@ -11,13 +11,14 @@ import (
 	"opendev.org/airship/kubernetes-entrypoint/mocks"
 )
 
-const testServiceName = "TEST_SERVICE_NAME"
-const testServiceNamespace = "TEST_SERVICE_NAMESPACE"
+const (
+	testServiceName      = "TEST_SERVICE_NAME"
+	testServiceNamespace = "TEST_SERVICE_NAMESPACE"
+)
 
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Service", func() {
-
 	BeforeEach(func() {
 		testEntrypoint = mocks.NewEntrypoint()
 	})

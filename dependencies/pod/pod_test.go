@@ -18,11 +18,12 @@ const (
 	requireSameNode     = true
 )
 
-var testEntrypoint entrypoint.EntrypointInterface
-var testLabels = map[string]string{"foo": "bar"}
+var (
+	testEntrypoint entrypoint.EntrypointInterface
+	testLabels     = map[string]string{"foo": "bar"}
+)
 
 var _ = Describe("Pod", func() {
-
 	BeforeEach(func() {
 		err := os.Setenv(PodNameEnvVar, podEnvVariableValue)
 		Expect(err).NotTo(HaveOccurred())

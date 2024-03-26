@@ -24,10 +24,12 @@ const (
 	templatePrefix = "/tmp/templates"
 )
 
-var testEntrypoint entrypoint.EntrypointInterface
-var testConfigContents string
-var testConfigPath string
-var testTemplatePath string
+var (
+	testEntrypoint     entrypoint.EntrypointInterface
+	testConfigContents string
+	testConfigPath     string
+	testTemplatePath   string
+)
 
 // var testClient cli.ClientInterface
 
@@ -54,11 +56,11 @@ func teardownOsEnvironment() (err error) {
 
 func setupConfigTemplate(templatePath string) error {
 	configContent := []byte(testConfigContents)
-	if err := os.MkdirAll(filepath.Dir(templatePath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(templatePath), 0o755); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(templatePath, configContent, 0644); err != nil {
+	if err := os.WriteFile(templatePath, configContent, 0o644); err != nil {
 		return err
 	}
 
@@ -78,7 +80,6 @@ func teardownConfigTemplate() (err error) {
 }
 
 var _ = Describe("Config", func() {
-
 	BeforeEach(func() {
 		err := setupOsEnvironment()
 		Expect(err).NotTo(HaveOccurred())

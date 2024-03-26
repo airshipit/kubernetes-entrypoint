@@ -30,7 +30,6 @@ var (
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Socket", func() {
-
 	// NOTE: It is impossible for a user to create a file that he does not
 	// have access to, and thus it is impossible to write an isolated unit
 	// test that checks for permission errors. That test is omitted from

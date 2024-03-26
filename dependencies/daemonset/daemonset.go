@@ -51,7 +51,6 @@ func NewDaemonset(name string, namespace string) (*Daemonset, error) {
 func (d Daemonset) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
 	var myPodName string
 	daemonset, err := entrypoint.Client().DaemonSets(d.namespace).Get(ctx, d.name, metav1.GetOptions{})
-
 	if err != nil {
 		return false, err
 	}

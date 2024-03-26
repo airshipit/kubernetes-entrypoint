@@ -20,7 +20,6 @@ const (
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Daemonset", func() {
-
 	BeforeEach(func() {
 		err := os.Setenv(PodNameEnvVar, podEnvVariableValue)
 		Expect(err).NotTo(HaveOccurred())
@@ -102,7 +101,6 @@ var _ = Describe("Daemonset", func() {
 
 		Expect(isResolved).To(BeTrue())
 		Expect(err).NotTo(HaveOccurred())
-
 	})
 
 	It("checks resolution of an incorrect daemonset namespace", func() {

@@ -17,8 +17,7 @@ import (
 
 const MockContainerName = "TEST_CONTAINER"
 
-type pClient struct {
-}
+type pClient struct{}
 
 const (
 	PodNotPresent                   = "NOT_PRESENT"
@@ -32,15 +31,27 @@ const (
 	NoPodsMatchLabel                = "NO_PODS"
 )
 
-func (p pClient) Create(ctx context.Context, pod *v1.Pod, opts metav1.CreateOptions) (*v1.Pod, error) {
+func (p pClient) Create(
+	ctx context.Context,
+	pod *v1.Pod,
+	opts metav1.CreateOptions,
+) (*v1.Pod, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Update(ctx context.Context, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+func (p pClient) Update(
+	ctx context.Context,
+	pod *v1.Pod,
+	opts metav1.UpdateOptions,
+) (*v1.Pod, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) UpdateStatus(ctx context.Context, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+func (p pClient) UpdateStatus(
+	ctx context.Context,
+	pod *v1.Pod,
+	opts metav1.UpdateOptions,
+) (*v1.Pod, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -48,7 +59,11 @@ func (p pClient) Delete(ctx context.Context, name string, opts metav1.DeleteOpti
 	return fmt.Errorf("not implemented")
 }
 
-func (p pClient) DeleteCollection(ctx context.Context, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+func (p pClient) DeleteCollection(
+	ctx context.Context,
+	opts metav1.DeleteOptions,
+	listOpts metav1.ListOptions,
+) error {
 	return fmt.Errorf("not implemented")
 }
 
@@ -111,23 +126,47 @@ func (p pClient) Watch(ctx context.Context, opts metav1.ListOptions) (watch.Inte
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (result *v1.Pod, err error) {
+func (p pClient) Patch(
+	ctx context.Context,
+	name string,
+	pt types.PatchType,
+	data []byte,
+	opts metav1.PatchOptions,
+	subresources ...string,
+) (result *v1.Pod, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Apply(ctx context.Context, pod *corev1applyconfigurations.PodApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Pod, err error) {
+func (p pClient) Apply(
+	ctx context.Context,
+	pod *corev1applyconfigurations.PodApplyConfiguration,
+	opts metav1.ApplyOptions,
+) (result *v1.Pod, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) ApplyStatus(ctx context.Context, pod *corev1applyconfigurations.PodApplyConfiguration, opts metav1.ApplyOptions) (result *v1.Pod, err error) {
+func (p pClient) ApplyStatus(
+	ctx context.Context,
+	pod *corev1applyconfigurations.PodApplyConfiguration,
+	opts metav1.ApplyOptions,
+) (result *v1.Pod, err error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) UpdateEphemeralContainers(ctx context.Context, podName string, pod *v1.Pod, opts metav1.UpdateOptions) (*v1.Pod, error) {
+func (p pClient) UpdateEphemeralContainers(
+	ctx context.Context,
+	podName string,
+	pod *v1.Pod,
+	opts metav1.UpdateOptions,
+) (*v1.Pod, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
-func (p pClient) Bind(ctx context.Context, binding *v1.Binding, opts metav1.CreateOptions) error {
+func (p pClient) Bind(
+	ctx context.Context,
+	binding *v1.Binding,
+	opts metav1.CreateOptions,
+) error {
 	return fmt.Errorf("not implemented")
 }
 
@@ -147,7 +186,10 @@ func (p pClient) GetLogs(name string, opts *v1.PodLogOptions) *restclient.Reques
 	return nil
 }
 
-func (p pClient) ProxyGet(scheme, name, port, path string, params map[string]string) restclient.ResponseWrapper {
+func (p pClient) ProxyGet(
+	scheme, name, port, path string,
+	params map[string]string,
+) restclient.ResponseWrapper {
 	return nil
 }
 

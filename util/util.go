@@ -24,7 +24,7 @@ func GetIp() (string, error) {
 	if err != nil || len(address) == 0 {
 		return "", fmt.Errorf("cannot get ip: %v", err)
 	}
-	//Take first element to get rid of subnet
+	// Take first element to get rid of subnet
 	ip := strings.Split(address[0].String(), "/")[0]
 	return ip, nil
 }

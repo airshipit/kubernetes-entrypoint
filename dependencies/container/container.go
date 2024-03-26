@@ -30,7 +30,6 @@ func init() {
 		os.Exit(1)
 	}
 	if containerDeps := env.SplitEnvToDeps(containerEnv); containerDeps != nil {
-
 		if len(containerDeps) > 0 {
 			for _, dep := range containerDeps {
 				entry.Register(NewContainer(dep.Name))
@@ -41,7 +40,6 @@ func init() {
 
 func NewContainer(name string) Container {
 	return Container{name: name}
-
 }
 
 func (c Container) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {

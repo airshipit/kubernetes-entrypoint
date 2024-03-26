@@ -13,7 +13,7 @@ import (
 
 var dependencies []Resolver // List containing all dependencies to be resolved
 const (
-	//DependencyPrefix is a prefix for env variables
+	// DependencyPrefix is a prefix for env variables
 	DependencyPrefix      = "DEPENDENCY_"
 	JsonSuffix            = "_JSON"
 	resolverSleepInterval = 2
@@ -76,9 +76,7 @@ func (e Entrypoint) Resolve() {
 				time.Sleep(resolverSleepInterval * time.Second)
 			}
 			logger.Info.Printf("Dependency %v is resolved.", dep)
-
 		}(dep)
 	}
 	wg.Wait()
-
 }

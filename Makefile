@@ -49,6 +49,8 @@ endif
 
 _BASE_IMAGE_ARG := $(if $(UBUNTU_BASE_IMAGE),--build-arg FROM="${UBUNTU_BASE_IMAGE}" ,)
 
+MAKE_TARGET := build
+
 # CONTAINER_TOOL defines the container tool to be used for building images.
 # Be aware that the target commands are only tested with Docker which is
 # scaffolded by default. However, you might want to replace it to use other
@@ -69,7 +71,7 @@ PKG                 := ./...
 TESTS               := .
 
 .PHONY: all
-all: build
+all: build unit-tests
 
 .PHONY: build
 build:
@@ -77,8 +79,16 @@ build:
 	@CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -o bin/kubernetes-entrypoint
 
 .PHONY: lint
-lint:
+lint: build
 	@go run ${LINTER_CMD} --config ${LINTER_CONFIG}
+
+.PHONY: fmt
+fmt: ## Run go fmt against code.
+	go fmt ./...
+
+.PHONY: vet
+vet: ## Run go vet against code.
+	go vet ./...
 
 .PHONY: docker-image
 docker-image:
@@ -89,6 +99,7 @@ ifeq ($(USE_PROXY), true)
 		--label "org.opencontainers.image.title=$(IMAGE_NAME)" \
 		-f images/Dockerfile.$(DISTRO) \
 		$(_BASE_IMAGE_ARG) \
+		--build-arg MAKE_TARGET=$(MAKE_TARGET) \
 		--build-arg http_proxy=$(PROXY) \
 		--build-arg https_proxy=$(PROXY) \
 		--build-arg HTTP_PROXY=$(PROXY) \
@@ -101,6 +112,7 @@ else
 		--label "org.opencontainers.image.created=$(shell date --rfc-3339=seconds --utc)" \
 		--label "org.opencontainers.image.title=$(IMAGE_NAME)" \
 		-f images/Dockerfile.$(DISTRO) \
+		--build-arg MAKE_TARGET=$(MAKE_TARGET) \
 		$(_BASE_IMAGE_ARG) .
 endif
 ifeq ($(PUSH_IMAGE), true)
@@ -117,14 +129,13 @@ check-docker:
 images: check-docker docker-image
 
 .PHONY: docker-image-unit-tests
-docker-image-unit-tests: DOCKER_MAKE_TARGET = unit-tests
-docker-image-unit-tests: DOCKER_TARGET_STAGE = builder
+docker-image-unit-tests: MAKE_TARGET = unit-tests
 docker-image-unit-tests: docker-image
 
 .PHONY: docker-image-lint
-docker-image-lint: DOCKER_MAKE_TARGET = lint
-docker-image-lint: DOCKER_TARGET_STAGE = builder
+docker-image-lint: MAKE_TARGET = lint
 docker-image-lint: docker-image
+
 
 .PHONY: get-modules
 get-modules:
@@ -135,5 +146,5 @@ clean:
 	@rm -rf bin
 
 .PHONY: unit-test
-unit-tests:
+unit-tests: build
 	@go test -v ./...

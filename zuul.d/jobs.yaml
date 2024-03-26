@@ -16,6 +16,21 @@
     run: playbooks/airship-kubernetes-entrypoint-lint-unit.yaml
     nodeset: airship-kubernetes-entrypoint-single-node-focal
 
+
+- job:
+    name: airship-kubernetes-entrypoint-lint
+    timeout: 3600
+    pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
+    run: playbooks/airship-kubernetes-entrypoint-lint.yaml
+    nodeset: airship-kubernetes-entrypoint-single-node-focal
+
+- job:
+    name: airship-kubernetes-entrypoint-unit
+    timeout: 3600
+    pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
+    run: playbooks/airship-kubernetes-entrypoint-unit.yaml
+    nodeset: airship-kubernetes-entrypoint-single-node-focal
+
 - job:
     name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
     timeout: 3600

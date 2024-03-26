@@ -11,8 +11,10 @@ import (
 	"opendev.org/airship/kubernetes-entrypoint/mocks"
 )
 
-const testJobName = "TEST_JOB_NAME"
-const testJobNamespace = "TEST_JOB_NAMESPACE"
+const (
+	testJobName      = "TEST_JOB_NAME"
+	testJobNamespace = "TEST_JOB_NAMESPACE"
+)
 
 var testLabels = map[string]string{
 	"k1": "v1",
@@ -21,7 +23,6 @@ var testLabels = map[string]string{
 var testEntrypoint entrypoint.EntrypointInterface
 
 var _ = Describe("Job", func() {
-
 	BeforeEach(func() {
 		testEntrypoint = mocks.NewEntrypoint()
 	})
@@ -78,5 +79,4 @@ var _ = Describe("Job", func() {
 		Expect(isResolved).To(Equal(false))
 		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, job)))
 	})
-
 })

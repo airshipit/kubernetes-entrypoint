@@ -40,6 +40,7 @@ func (c Client) Jobs(namespace string) v1batch.JobInterface {
 func (c Client) Endpoints(namespace string) v1core.EndpointsInterface {
 	return c.client.CoreV1().Endpoints(namespace)
 }
+
 func (c Client) DaemonSets(namespace string) appsv1.DaemonSetInterface {
 	return c.client.AppsV1().DaemonSets(namespace)
 }
@@ -48,7 +49,10 @@ func (c Client) Services(namespace string) v1core.ServiceInterface {
 	return c.client.CoreV1().Services(namespace)
 }
 
-func (c Client) CustomResource(ctx context.Context, apiVersion, kind, namespace, name string) (*unstructured.Unstructured, error) {
+func (c Client) CustomResource(
+	ctx context.Context,
+	apiVersion, kind, namespace, name string,
+) (*unstructured.Unstructured, error) {
 	apiResourceList, err := c.client.Discovery().ServerResourcesForGroupVersion(apiVersion)
 	if err != nil {
 		return nil, err

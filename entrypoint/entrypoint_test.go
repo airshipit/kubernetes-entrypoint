@@ -21,8 +21,10 @@ const (
 	loggerInfoText    = "Entrypoint INFO: "
 )
 
-var testEntrypoint EntrypointInterface
-var testClient cli.ClientInterface
+var (
+	testEntrypoint EntrypointInterface
+	testClient     cli.ClientInterface
+)
 
 type dummyResolver struct {
 	name      string
@@ -32,6 +34,7 @@ type dummyResolver struct {
 func (d dummyResolver) IsResolved(ctx context.Context, entry EntrypointInterface) (bool, error) {
 	return true, nil
 }
+
 func (d dummyResolver) GetName() (name string) {
 	return d.name
 }
@@ -50,7 +53,6 @@ func registerNilResolver() {
 }
 
 var _ = Describe("Entrypoint", func() {
-
 	dummy := dummyResolver{name: dummyResolverName}
 
 	BeforeEach(func() {
