@@ -16,6 +16,7 @@
         - airship-kubernetes-entrypoint-lint
         - airship-kubernetes-entrypoint-unit
         - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
+        - airship-kubernetes-entrypoint-airskiff-deployment-focal
 
     gate:
       jobs:
