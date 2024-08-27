@@ -1,6 +1,6 @@
 ARG FROM=ubuntu:20.04
 # Build the manager binary
-FROM golang:1.21-bullseye as builder
+FROM golang:1.21-bullseye AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -16,7 +16,7 @@ RUN make ${MAKE_TARGET}
 
 
 
-FROM ${FROM} as release
+FROM ${FROM} AS release
 
 LABEL org.opencontainers.image.authors='airship-discuss@lists.airshipit.org, irc://#airshipit@freenode' \
       org.opencontainers.image.url='https://airshipit.org' \
@@ -25,7 +25,7 @@ LABEL org.opencontainers.image.authors='airship-discuss@lists.airshipit.org, irc
       org.opencontainers.image.vendor='The Airship Authors' \
       org.opencontainers.image.licenses='Apache-2.0'
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
