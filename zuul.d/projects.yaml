@@ -15,15 +15,15 @@
       jobs:
         - airship-kubernetes-entrypoint-lint
         - airship-kubernetes-entrypoint-unit
-        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
-        - airship-kubernetes-entrypoint-airskiff-deployment-focal
+        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_jammy
+        - airship-kubernetes-entrypoint-airskiff-deployment-jammy
 
     gate:
       jobs:
         - airship-kubernetes-entrypoint-lint
         - airship-kubernetes-entrypoint-unit
-        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
+        - airship-kubernetes-entrypoint-docker-build-gate-ubuntu_jammy
     post:
       jobs:
         - airship-kubernetes-entrypoint-upload-git-mirror
-        - airship-kubernetes-entrypoint-docker-publish-ubuntu_focal
+        - airship-kubernetes-entrypoint-docker-publish-ubuntu_jammy

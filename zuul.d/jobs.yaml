@@ -14,7 +14,7 @@
     name: airship-kubernetes-entrypoint-lint-unit
     pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-lint-unit.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    nodeset: airship-kubernetes-entrypoint-single-node-jammy
 
 
 - job:
@@ -22,14 +22,14 @@
     timeout: 3600
     pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-lint.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    nodeset: airship-kubernetes-entrypoint-single-node-jammy
 
 - job:
     name: airship-kubernetes-entrypoint-unit
     timeout: 3600
     pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-unit.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    nodeset: airship-kubernetes-entrypoint-single-node-jammy
 
 - job:
     name: airship-kubernetes-entrypoint-base
@@ -40,6 +40,7 @@
     required-projects:
       - name: openstack/openstack-helm
       - name: openstack/openstack-helm-infra
+      - name: openstack/openstack-helm-plugin
       - name: airship/treasuremap
         override-checkout: v1.9
     irrelevant-files: &irrelevant-files
@@ -51,6 +52,7 @@
       - ^deckhand/tests/unit/.*$
     timeout: 10800
     pre-run:
+      - playbooks/checkout-treasuremap-ref.yaml
       - playbooks/prepare-hosts.yaml
       - playbooks/mount-volumes.yaml
       - playbooks/deploy-env.yaml
@@ -59,6 +61,7 @@
     post-run:
       - playbooks/osh-infra-collect-logs.yaml
     vars:
+      treasuremap_ref: v1.9
       extra_volume:
         size: 80G
         type: Linux
@@ -68,21 +71,23 @@
       containerd:
         root_path: "/opt/ext_vol/containerd"
       kubeadm:
-        pod_network_cidr: "10.244.0.0/24"
+        pod_network_cidr: "10.244.0.0/16"
         service_cidr: "10.96.0.0/16"
+      osh_plugin_repo: "{{ zuul.project.src_dir }}/../../openstack/openstack-helm-plugin"
       loopback_setup: true
       loopback_device: /dev/loop100
       loopback_image: "/opt/ext_vol/openstack-helm/ceph-loop.img"
       ceph_osd_data_device: /dev/loop100
-      kube_version_repo: "v1.29"
-      # the list of k8s package versions are available here
-      # https://pkgs.k8s.io/core:/stable:/{{ kube_version_repo }}/deb/Packages
-      kube_version: "1.29.2-1.1"
-      calico_version: "v3.27.0"
-      coredns_version: "v1.11.1"
-      helm_version: "v3.13.2"
-      yq_version: "v4.6.0"
-      crictl_version: "v1.26.1"
+      kube_version_repo: "v1.30"
+      kube_version: "1.30.3-1.1"
+      calico_setup: true
+      calico_version: "v3.27.4"
+      cilium_setup: false
+      cilium_version: "1.16.0"
+      flannel_setup: false
+      flannel_version: v0.25.4
+      helm_version: "v3.15.4"
+      crictl_version: "v1.30.1"
       zuul_osh_relative_path: ../../openstack/openstack-helm
       zuul_osh_infra_relative_path: ../../openstack/openstack-helm-infra
       zuul_treasuremap_relative_path: ../../airship/treasuremap
@@ -90,19 +95,19 @@
       run_helm_tests: "no"
 
 - job:
-    name: airship-kubernetes-entrypoint-airskiff-deployment-focal
-    nodeset: treasuremap-airskiff-1node-ubuntu_focal
+    name: airship-kubernetes-entrypoint-airskiff-deployment-jammy
+    nodeset: treasuremap-airskiff-1node-ubuntu_jammy
     description: |
       Deploy Memcached using Airskiff and submitted kubernetes-entrypoint changes.
     parent: airship-kubernetes-entrypoint-base
     vars:
       site: airskiff
-      HELM_ARTIFACT_URL: https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz
-      HTK_COMMIT: 6ca83be78013446540b68fd28d0a75d5b2329f40
-      OSH_INFRA_COMMIT: 6ca83be78013446540b68fd28d0a75d5b2329f40
-      OSH_COMMIT: 176b412072969f982386db9560b6f50fcb7e0148
+      HELM_ARTIFACT_URL: https://get.helm.sh/helm-v3.15.4-linux-amd64.tar.gz
+      HTK_COMMIT: 43fd7143481b6ddda0dbd2f26bf6ec39a417b15b
+      OSH_INFRA_COMMIT: 43fd7143481b6ddda0dbd2f26bf6ec39a417b15b
+      OSH_COMMIT: 540df5cb0dbdaed63c202e2d6f2b7891062f8203
       CLONE_KUBERNETES_ENTRYPOINT: false
-      DISTRO: ubuntu_focal
+      DISTRO: ubuntu_jammy
       DOCKER_REGISTRY: localhost:5000
       MAKE_KUBERTENES_ENTRYPOINT_IMAGES: true
       USE_ARMADA_GO: true
@@ -127,28 +132,28 @@
 
 
 - job:
-    name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_focal
+    name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_jammy
     timeout: 3600
     run: playbooks/docker-image-build.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    nodeset: airship-kubernetes-entrypoint-single-node-jammy
     vars:
       publish: false
-      distro: ubuntu_focal
+      distro: ubuntu_jammy
       tags:
         dynamic:
           patch_set: true
 
 
 - job:
-    name: airship-kubernetes-entrypoint-docker-publish-ubuntu_focal
+    name: airship-kubernetes-entrypoint-docker-publish-ubuntu_jammy
     timeout: 3600
     run: playbooks/docker-image-build.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-focal
+    nodeset: airship-kubernetes-entrypoint-single-node-jammy
     secrets:
       - airship_kubernetes_entrypoint_quay_creds
     vars:
       publish: true
-      distro: ubuntu_focal
+      distro: ubuntu_jammy
       tags:
         dynamic:
           branch: true

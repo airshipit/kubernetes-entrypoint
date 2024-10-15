@@ -52,7 +52,6 @@
       block:
         - pip:
             name: docker
-            version: 4.4.4
             executable: pip3
       become: True
 
@@ -60,7 +59,6 @@
       block:
         - pip:
             name: tox
-            version: 3.28.0
             executable: pip3
       become: True
 
@@ -102,6 +100,7 @@
             username: "{{ airship_kubernetes_entrypoint_quay_creds.username }}"
             password: "{{ airship_kubernetes_entrypoint_quay_creds.password }}"
             registry_url: "https://quay.io/api/v1/"
+            api_version: "1.43"
 
         - make:
             chdir: "{{ zuul.project.src_dir }}"

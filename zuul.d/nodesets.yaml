@@ -21,3 +21,9 @@
     nodes:
       - name: primary
         label: ubuntu-focal
+
+- nodeset:
+    name: airship-kubernetes-entrypoint-single-node-jammy
+    nodes:
+      - name: primary
+        label: ubuntu-jammy

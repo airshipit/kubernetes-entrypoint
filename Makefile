@@ -13,8 +13,10 @@ LABEL             ?= org.airshipit.build=community
 COMMIT            ?= $(shell git rev-parse HEAD)
 PYTHON            = python3
 CHARTS            := $(filter-out deps, $(patsubst charts/%/.,%,$(wildcard charts/*/.)))
-DISTRO            ?= ubuntu_focal
+DISTRO             ?= ubuntu_jammy
+DISTRO_ALIAS	   ?= ubuntu_focal
 IMAGE             := ${DOCKER_REGISTRY}/${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG}-${DISTRO}
+IMAGE_ALIAS              := ${DOCKER_REGISTRY}/${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG}-${DISTRO_ALIAS}
 UBUNTU_BASE_IMAGE ?=
 
 # VERSION INFO
@@ -115,10 +117,18 @@ else
 		--build-arg MAKE_TARGET=$(MAKE_TARGET) \
 		$(_BASE_IMAGE_ARG) .
 endif
-ifeq ($(PUSH_IMAGE), true)
-	@docker push $(IMAGE)
+ifneq ($(DISTRO), $(DISTRO_ALIAS))
+	docker tag $(IMAGE) $(IMAGE_ALIAS)
+ifeq ($(DOCKER_REGISTRY), localhost:5000)
+	docker push $(IMAGE_ALIAS)
 endif
-
+endif
+ifeq ($(DOCKER_REGISTRY), localhost:5000)
+	docker push $(IMAGE)
+endif
+ifeq ($(PUSH_IMAGE), true)
+	docker push $(IMAGE)
+endif
 
 check-docker:
 	@if [ -z $$(which docker) ]; then \
