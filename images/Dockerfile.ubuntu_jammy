@@ -8,6 +8,7 @@ SHELL [ "/bin/bash", "-cex" ]
 ADD . /usr/src/kubernetes-entrypoint
 WORKDIR /usr/src/kubernetes-entrypoint
 ENV GO111MODULE=on
+ENV GOTOOLCHAIN=auto
 
 RUN make get-modules
 
