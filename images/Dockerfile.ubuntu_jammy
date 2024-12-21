@@ -1,6 +1,6 @@
-ARG FROM=ubuntu:jammy
+ARG FROM=quay.io/airshipit/ubuntu:jammy
 # Build the manager binary
-FROM golang:1.23-bullseye as builder
+FROM quay.io/airshipit/golang:1.23.1-bullseye as builder
 ARG TARGETOS
 ARG TARGETARCH
 
