@@ -1,6 +1,6 @@
 ARG FROM=quay.io/airshipit/ubuntu:jammy
 # Build the manager binary
-FROM quay.io/airshipit/golang:1.23.1-bullseye as builder
+FROM quay.io/airshipit/golang:1.23.8-bullseye AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -17,7 +17,7 @@ RUN make ${MAKE_TARGET}
 
 
 
-FROM ${FROM} as release
+FROM ${FROM} AS release
 
 LABEL org.opencontainers.image.authors='airship-discuss@lists.airshipit.org, irc://#airshipit@freenode' \
       org.opencontainers.image.url='https://airshipit.org' \
@@ -26,13 +26,14 @@ LABEL org.opencontainers.image.authors='airship-discuss@lists.airshipit.org, irc
       org.opencontainers.image.vendor='The Airship Authors' \
       org.opencontainers.image.licenses='Apache-2.0'
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
 COPY --from=builder /usr/src/kubernetes-entrypoint/bin/kubernetes-entrypoint /usr/local/bin/kubernetes-entrypoint
 
 RUN apt update \
+    && apt upgrade -y \
     && apt install -y --no-install-recommends coreutils
 
 USER 65534
