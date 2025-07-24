@@ -11,126 +11,31 @@
 # limitations under the License.
 
 - job:
-    name: airship-kubernetes-entrypoint-lint-unit
-    pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
-    run: playbooks/airship-kubernetes-entrypoint-lint-unit.yaml
-    nodeset: airship-kubernetes-entrypoint-single-node-jammy
-
-
-- job:
     name: airship-kubernetes-entrypoint-lint
-    timeout: 3600
-    pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-lint.yaml
     nodeset: airship-kubernetes-entrypoint-single-node-jammy
 
 - job:
     name: airship-kubernetes-entrypoint-unit
     timeout: 3600
-    pre-run: playbooks/airship-kubernetes-entrypoint-deploy-docker.yaml
     run: playbooks/airship-kubernetes-entrypoint-unit.yaml
     nodeset: airship-kubernetes-entrypoint-single-node-jammy
 
 - job:
-    name: airship-kubernetes-entrypoint-base
-    abstract: true
-    roles:
-      - zuul: openstack/openstack-helm
-      - zuul: zuul/zuul-jobs
-    required-projects:
-      - name: openstack/openstack-helm
-      - name: openstack/openstack-helm-plugin
-      - name: airship/treasuremap
-        override-checkout: v1.9
-    irrelevant-files: &irrelevant-files
-      - ^.*\.rst$
-      - ^doc/.*$
-      - ^etc/.*$
-      - ^releasenotes/.*$
-      - ^setup.cfg$
-      - ^deckhand/tests/unit/.*$
-    timeout: 10800
-    pre-run:
-      - playbooks/checkout-treasuremap-ref.yaml
-      - playbooks/prepare-hosts.yaml
-      - playbooks/mount-volumes.yaml
-      - playbooks/deploy-env.yaml
-    run:
-      - playbooks/airship-run-scripts.yaml
-    post-run:
-      - playbooks/osh-infra-collect-logs.yaml
-    vars:
-      treasuremap_ref: v1.9
-      extra_volume:
-        size: 80G
-        type: Linux
-        mount_point: /opt/ext_vol
-      docker:
-        root_path: "/opt/ext_vol/docker"
-      containerd:
-        root_path: "/opt/ext_vol/containerd"
-      kubeadm:
-        pod_network_cidr: "10.244.0.0/16"
-        service_cidr: "10.96.0.0/16"
-      osh_plugin_repo: "{{ zuul.project.src_dir }}/../../openstack/openstack-helm-plugin"
-      loopback_setup: true
-      loopback_device: /dev/loop100
-      loopback_image: "/opt/ext_vol/openstack-helm/ceph-loop.img"
-      ceph_osd_data_device: /dev/loop100
-      kube_version_repo: "v1.32"
-      kube_version: "1.32.1-1.1"
-      calico_setup: true
-      calico_version: "v3.27.4"
-      cilium_setup: false
-      cilium_version: "1.16.0"
-      flannel_setup: false
-      flannel_version: v0.25.4
-      metallb_setup: false
-      metallb_version: "0.13.12"
-      helm_version: "v3.14.0"
-      crictl_version: "v1.30.1"
-      zuul_osh_relative_path: ../../openstack/openstack-helm
-      zuul_osh_infra_relative_path: ../../openstack/openstack-helm
-      zuul_treasuremap_relative_path: ../../airship/treasuremap
-      gate_scripts_relative_path: ../../openstack/openstack-helm
-      run_helm_tests: "no"
-
-- job:
     name: airship-kubernetes-entrypoint-airskiff-deployment-jammy
-    nodeset: treasuremap-airskiff-1node-ubuntu_jammy
     description: |
       Deploy Memcached using Airskiff and submitted kubernetes-entrypoint changes.
-    parent: airship-kubernetes-entrypoint-base
+    parent: treasuremap-airskiff-infra-deploy-base
+    nodeset: treasuremap-airskiff-1node-ubuntu_jammy
+    required-projects:
+      - name: airship/treasuremap
+        override-checkout: v1.9
     vars:
-      site: airskiff
-      HELM_ARTIFACT_URL: https://get.helm.sh/helm-v3.16.4-linux-amd64.tar.gz
-      HTK_COMMIT: 49c117443391cec75e0bd52bb4a9d033325927ad
-      OSH_COMMIT: 49c117443391cec75e0bd52bb4a9d033325927ad
+      treasuremap_ref: v1.9
       CLONE_KUBERNETES_ENTRYPOINT: false
-      DISTRO: ubuntu_jammy
-      DOCKER_REGISTRY: localhost:5000
       MAKE_KUBERTENES_ENTRYPOINT_IMAGES: true
       USE_ARMADA_GO: true
       gate_scripts_relative_path: ../../airship/treasuremap
-      gate_scripts:
-        - ./tools/deployment/airskiff/developer/000-prepare-k8s.sh
-        - ./tools/deployment/airskiff/developer/009-setup-apparmor.sh
-        - ./tools/deployment/airskiff/developer/000-clone-dependencies.sh
-        - ./tools/deployment/airskiff/developer/020-setup-client.sh
-        - ./tools/deployment/airskiff/developer/015-make-all-charts.sh
-        - ./tools/deployment/airskiff/developer/017-make-all-images.sh
-        - ./tools/deployment/airskiff/developer/025-start-artifactory.sh
-        - ./tools/deployment/airskiff/developer/026-reduce-site.sh
-        - ./tools/deployment/airskiff/developer/027-enable-armada-operator.sh
-        - ./tools/deployment/airskiff/developer/030-armada-bootstrap.sh
-        - ./tools/deployment/airskiff/developer/100-deploy-osh.sh
-        - ./tools/deployment/airskiff/common/os-env.sh
-        - ./tools/gate/wait-for-shipyard.sh
-        - ./tools/deployment/airskiff/common/get-airflow-worker-logs.sh
-    irrelevant-files: *irrelevant-files
-
-
-
 
 - job:
     name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_jammy
@@ -143,7 +48,6 @@
       tags:
         dynamic:
           patch_set: true
-
 
 - job:
     name: airship-kubernetes-entrypoint-docker-publish-ubuntu_jammy
@@ -161,7 +65,6 @@
           commit: true
         static:
           - latest
-
 
 - secret:
     name: airship_kubernetes_entrypoint_quay_creds

@@ -35,7 +35,7 @@ func init() {
 	crEnv := fmt.Sprintf("%sCUSTOM_RESOURCE", entrypoint.DependencyPrefix)
 	resolvers, err := fromEnv(crEnv)
 	if err != nil {
-		logger.Error.Printf(err.Error())
+		logger.Error.Printf("Error initializing custom resource: %s", err.Error()) // Fixed format string
 	}
 	for _, resolver := range resolvers {
 		entrypoint.Register(resolver)
