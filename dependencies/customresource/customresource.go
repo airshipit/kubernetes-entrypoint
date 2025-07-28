@@ -78,6 +78,11 @@ func fromEnv(jsonEnv string) ([]Resolver, error) {
 		return resolvers, nil
 	}
 
+	// Check if the environment variable is empty
+	if strings.TrimSpace(jsonEnvVal) == "" {
+		return resolvers, nil
+	}
+
 	err := json.Unmarshal([]byte(jsonEnvVal), &resolvers)
 	if err != nil {
 		return resolvers, fmt.Errorf("unable to unmarshal variable %s with value %s: %s",
