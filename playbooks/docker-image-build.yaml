@@ -99,6 +99,8 @@
         - docker_login:
             username: "{{ airship_kubernetes_entrypoint_quay_creds.username }}"
             password: "{{ airship_kubernetes_entrypoint_quay_creds.password }}"
+            registry_url: "https://quay.io/api/v1/"
+            api_version: "1.45"
 
         - make:
             chdir: "{{ zuul.project.src_dir }}"
