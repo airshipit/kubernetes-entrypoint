@@ -14,6 +14,8 @@ import (
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
+
+	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
 type ClientInterface interface {
@@ -73,9 +75,15 @@ func (c Client) CustomResource(
 				Resource: apiResource.Name,
 			}
 
-			return c.dynamicClient.Resource(gvr).
-				Namespace(namespace).
-				Get(ctx, name, metav1.GetOptions{})
+			resourceClient := c.dynamicClient.Resource(gvr)
+			if apiResource.Namespaced {
+				if namespace == "" {
+					namespace = env.GetBaseNamespace()
+				}
+				return resourceClient.Namespace(namespace).Get(ctx, name, metav1.GetOptions{})
+			}
+
+			return resourceClient.Get(ctx, name, metav1.GetOptions{})
 		}
 	}
 	return nil, fmt.Errorf("could not find resource with with version %v, "+
