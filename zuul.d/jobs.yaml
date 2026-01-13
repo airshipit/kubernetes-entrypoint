@@ -55,7 +55,7 @@
     run: playbooks/docker-image-build.yaml
     nodeset: airship-kubernetes-entrypoint-single-node-jammy
     secrets:
-      - airship_kubernetes_entrypoint_quay_creds
+      - airship_kubernetes_entrypoint_quay_creds_2026
     vars:
       publish: true
       distro: ubuntu_jammy
@@ -92,6 +92,31 @@
           /PyCh5RtrZtpJqi5BBGUPSPSWoqP9L+FkY2ZZLad0KqTC8FYMIC+p9bfO+t7RNyJSVzxx
           +8/nuoWfSPgBJpd6Og1KGs2n9tt5adOLALZoj96hz8zYKHrqDdWMPWOVmDSycY=
 
+- secret:
+    name: airship_kubernetes_entrypoint_quay_creds_2026
+    data:
+      username: !encrypted/pkcs1-oaep
+        - BLIlhj2nxI9SRkGIgsByzgNtxRKHLhxqsdJ2EK4bBFTztIDCFIjrwe1hHsq3a9D8XPGqk
+          TDsph5vab7G8I7XsuIhsbXHFKn3+37pPXxAw5CMyxtJ76Ojwi+DM5T1nNhEf3veqlRvht
+          ngW0k+EDjQKYbhFfuog5tih5PnQEKkR0D2CrUs1gBQYTaz7xgdc0j5rKbHoZSBnbS3SNN
+          kPDxC4JC2+oudcNNHi4TXAPEprg7Wot66RzyODaQR5Wp6rHRgPVFzKS80/qYW6lY2xSLA
+          LZV+OkqH3z5MBODg97vShcGDcBnWnGoQmUJwkyPFt60gW41ABIv0qLDcABU0uWW7ly0i5
+          zBAf7OETvN0wMZUI0+55mL50xiwXVODWoAYWso2fCBsIDSXJTrlzBME21o232gV5RdSVk
+          gjIz8QdErhF1edGrJGCgauAZojiVyjRQvSHBDTgz2I8roIeuyMEQrlgijugLmE8vpCq9e
+          nfS53o7gDqYYOK2NXFm+OP/bOrCgwq3+IK06fUpO/o3EL9Q/87mwqh3iskrpy3oYTelz2
+          NYyljoJMl/sRJ6Fg0N676rrb4lrGkIpZymS00r4bHebfwiuJ9SIG72ND3Doz2AEG2wGbe
+          1bz1YL6NncKQEYFlZIVTuLkYXLswP6bsiyOwxYVwhwTzDGhSlRwA8F2RZA72cE=
+      password: !encrypted/pkcs1-oaep
+        - ZHJqX+5D77pa+EY2Y3UuUGYYz3RY9UE7F52pAbeSVAqAQZ3qjftB+ZDlabCnEhZKGDd39
+          +EkUmZAwSS0hCKrExo7sAvoK337Re6e6dBqaaczM+Lr8Z+LSgsyjmA4UJ+jqTSPkStQ4j
+          EDW0SG+9OL7njeWcC/iHjfOB9ZtJn1tz2e+nu9JqhioaMjNdqgHQvjYWO3Bjh09gV6KNF
+          PVrlPfCwovgteg+Kb+nO3+S19INbwwEL4o3YNSE8KH0JU+FczRjMyRYkBCmQu/4+I5qDx
+          vv8bKE+OfsvdSiX8baZuKNvSfffPrxmMFAWdHjiWURJ6PNVtCs4RWVxhMju2ARhGUumoC
+          w2GOJW+Tqp5b8+LgbGlw89YBBcqRsYEie2q7smAKskL58V9ivKCQjUCnVFugQsXMQS+Qe
+          k2FBzW0mWDLva/wkQb4kqz/PxD09VHACONzszZ34nmyBBmaeoFMolGcFqoKrt/Skr4qHP
+          Xhc+DYBgHNPIAKSJ9sIs1LUzhOo7LUUKZR8HgmSAsJMEmcyKssxn1YoUyrX/YNG58XIv4
+          Lju2JhLXjqtkkWE2/tG7lXy02fsASq46bhbZVf0AAcKew6HCTQ4cpUmLdwXkiqRBmdvDT
+          JcbRUTmWBiYk6LlsU4hHySNFzYDuvRFWGWhvcMefbQJgc4TNWlLoyBHSMdlE1U=
 
 - job:
     name: airship-kubernetes-entrypoint-upload-git-mirror
@@ -101,7 +126,7 @@
       git_mirror_repository: airshipit/kubernetes-entrypoint
     secrets:
       - name: git_mirror_credentials
-        secret: airship-kubernetes-entrypoint-airshipit-github-secret-2023-03-23
+        secret: kubernetes-entrypoint-airshipit-github-ed25519-secret-2026-01-13
         pass-to-parent: true
 
 - secret:
@@ -151,3 +176,21 @@
           xLqmax0E46uFKtWx1GoX03y8DgY0Oi2kba6yBMdQyQIMlPN0bDglatYcdILo64wyCs6/t
           U1t+8FqML7wBzHp6qA1VuAJTFWS4ah1Md1N0CcEmPOUSABov5T/DYNK0u1XFteApt975o
           iBZUJ15U0KtUbqQ6o6zngxT9zPYLdj0BK4kCb9loSAFeWN82iFDsacbYkxwqPU=
+
+- secret:
+    name: kubernetes-entrypoint-airshipit-github-ed25519-secret-2026-01-13
+    data:
+      user: git
+      host: github.com
+      host_key: github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+      ssh_key: !encrypted/pkcs1-oaep
+        - qp1K6nVyBiZ4zHJeEPmEHMTwBHlQ6SQ7jrqyw6xE1AB8NdvzNhG9p8RSoYy5zYp+YSanm
+          dpX0cGJ6JVOqmetp6kPINZ1i7xjigE2bxaSA8jiElSwH5GkoMggTGKYtWSFH60tqhgCAR
+          obQXPSXpQOjKoYe1SUUF4mjpDpUBRColUrETDKNUSj5zak54QdA+P8JuehXhHSpHtf4Tw
+          7QKH4XAXswkk0RQAUDZr4kgwrosY/DM8W+W2BhZxJTwfQa45kKHwCRwX2DNu2yDFXJPx1
+          SKScmKMVAIj/fNE3UJjv/v4jO/8QdijYd8rYpVo6d0BdefMYc9+HFF6M83AtPDbSMYtxD
+          Gogqi3LzW1tSKCPPz6wQjALvEXolu8UQ1zTTxUH6v5W8aSrM9Yshf3mXAi3zM6nUKjaqw
+          4j2VQeBP89N3XAm/f69k+GLTWO5Q6mpkcDqQ6pQyl9l/ATOKL/EgpyNonxo4wUSSb79Y7
+          JWtEFXvxm3AfyxJ9Dfn0ukdvAm8e0eIDxWrBKgsmo2HDBLz6CA11S0VkJWGnyQAMFTG9r
+          za3hTBpoK9NRBo5eQPOkouB8yrTvVvKBgcnFirzkxzHNuHlvTi2ua0IwqO1AQNUtgC6/f
+          P818dUJqwiGj28FDQcKX2BQAh3GroJHDL0vrV+72pjkj8KZpELyos2EdcTgu2E=

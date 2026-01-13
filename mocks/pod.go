@@ -162,6 +162,15 @@ func (p pClient) UpdateEphemeralContainers(
 	return nil, fmt.Errorf("not implemented")
 }
 
+func (p pClient) UpdateResize(
+	ctx context.Context,
+	podName string,
+	pod *v1.Pod,
+	opts metav1.UpdateOptions,
+) (*v1.Pod, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
 func (p pClient) Bind(
 	ctx context.Context,
 	binding *v1.Binding,
