@@ -17,10 +17,10 @@
         label: ubuntu-bionic
 
 - nodeset:
-    name: airship-kubernetes-entrypoint-single-node-focal
+    name: airship-kubernetes-entrypoint-single-node-noble
     nodes:
       - name: primary
-        label: ubuntu-focal
+        label: ubuntu-noble
 
 - nodeset:
     name: airship-kubernetes-entrypoint-single-node-jammy
