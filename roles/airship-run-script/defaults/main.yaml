@@ -16,7 +16,7 @@ kubeadm:
   pod_network_cidr: "10.244.0.0/24"
 osh_params:
   container_distro_name: ubuntu
-  container_distro_version: jammy
+  container_distro_version: noble
 osh_values_overrides_path: "../openstack-helm/values_overrides"
 osh_infra_values_overrides_path: "../openstack-helm/values_overrides"
   # feature_gates:
@@ -26,7 +26,7 @@ HTK_COMMIT: master
 OSH_INFRA_COMMIT: master
 OSH_COMMIT: master
 COREDNS_VERSION: v1.11.1
-DISTRO: ubuntu_jammy
+DISTRO: ubuntu_noble
 DOCKER_REGISTRY: quay.io
 CLONE_ARMADA: true
 CLONE_ARMADA_GO: true

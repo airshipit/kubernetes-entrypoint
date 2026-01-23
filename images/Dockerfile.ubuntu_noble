@@ -15,8 +15,6 @@ RUN make get-modules
 ARG MAKE_TARGET=build
 RUN make ${MAKE_TARGET}
 
-
-
 FROM ${FROM} AS release
 
 LABEL org.opencontainers.image.authors='airship-discuss@lists.airshipit.org, irc://#airshipit@freenode' \
