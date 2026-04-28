@@ -45,11 +45,19 @@ var _ = Describe("Service", func() {
 		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
-		Expect(err.Error()).To(Equal(mocks.MockEndpointError))
+		Expect(err.Error()).To(Equal(mocks.MockEndpointSliceError))
 	})
 
 	It("checks resolution failure of a succeeding service with removed subsets", func() {
-		service := NewService(mocks.EmptySubsetsServiceName, mocks.EmptySubsetsServiceName)
+		service := NewService(mocks.EmptyEndpointsServiceName, mocks.EmptyEndpointsServiceName)
+
+		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
+		Expect(isResolved).To(Equal(false))
+		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, service.name)))
+	})
+
+	It("checks resolution failure of a service with not-ready endpoints", func() {
+		service := NewService(mocks.NotReadyEndpointsServiceName, mocks.NotReadyEndpointsServiceName)
 
 		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 		Expect(isResolved).To(Equal(false))

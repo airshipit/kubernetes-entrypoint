@@ -13,6 +13,7 @@ import (
 	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	v1batch "k8s.io/client-go/kubernetes/typed/batch/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
+	v1discovery "k8s.io/client-go/kubernetes/typed/discovery/v1"
 	"k8s.io/client-go/rest"
 
 	"opendev.org/airship/kubernetes-entrypoint/util/env"
@@ -21,7 +22,7 @@ import (
 type ClientInterface interface {
 	Pods(string) v1core.PodInterface
 	Jobs(string) v1batch.JobInterface
-	Endpoints(string) v1core.EndpointsInterface
+	EndpointSlices(string) v1discovery.EndpointSliceInterface
 	DaemonSets(string) appsv1.DaemonSetInterface
 	Services(string) v1core.ServiceInterface
 	CustomResource(ctx context.Context, apiVersion, namespace, resource, name string) (*unstructured.Unstructured, error)
@@ -39,8 +40,8 @@ func (c Client) Jobs(namespace string) v1batch.JobInterface {
 	return c.client.BatchV1().Jobs(namespace)
 }
 
-func (c Client) Endpoints(namespace string) v1core.EndpointsInterface {
-	return c.client.CoreV1().Endpoints(namespace)
+func (c Client) EndpointSlices(namespace string) v1discovery.EndpointSliceInterface {
+	return c.client.DiscoveryV1().EndpointSlices(namespace)
 }
 
 func (c Client) DaemonSets(namespace string) appsv1.DaemonSetInterface {

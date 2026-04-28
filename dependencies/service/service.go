@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	discoveryv1 "k8s.io/api/discovery/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	entry "opendev.org/airship/kubernetes-entrypoint/entrypoint"
 	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
-const FailingStatusFormat = "Service %v has no endpoints"
+const FailingStatusFormat = "Service %v has no ready endpoints"
 
 type Service struct {
 	name      string
@@ -36,16 +37,20 @@ func NewService(name string, namespace string) Service {
 }
 
 func (s Service) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
-	e, err := entrypoint.Client().Endpoints(s.namespace).Get(ctx, s.name, metav1.GetOptions{})
+	listOptions := metav1.ListOptions{LabelSelector: fmt.Sprintf("%s=%s", discoveryv1.LabelServiceName, s.name)}
+	esList, err := entrypoint.Client().EndpointSlices(s.namespace).List(ctx, listOptions)
 	if err != nil {
 		return false, err
 	}
 
-	for _, subset := range e.Subsets {
-		if len(subset.Addresses) > 0 {
-			return true, nil
+	for _, es := range esList.Items {
+		for _, e := range es.Endpoints {
+			if len(e.Addresses) > 0 && (e.Conditions.Ready == nil || *e.Conditions.Ready) {
+				return true, nil
+			}
 		}
 	}
+
 	return false, fmt.Errorf(FailingStatusFormat, s.name)
 }
 

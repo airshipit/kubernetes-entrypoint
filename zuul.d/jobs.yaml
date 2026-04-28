@@ -37,6 +37,8 @@
       DOCKER_REGISTRY: "control-plane.minikube.internal:5000"
       USE_ARMADA_GO: true
       gate_scripts_relative_path: ../../airship/treasuremap
+      HTK_COMMIT: 94ead9359a388331e71b13d83f0d14a71fa3f3ce
+      OSH_COMMIT: 94ead9359a388331e71b13d83f0d14a71fa3f3ce
 
 - job:
     name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_noble

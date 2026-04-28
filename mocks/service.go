@@ -16,10 +16,10 @@ import (
 type sClient struct{}
 
 const (
-	MockServiceError        = "mock service didnt work"
-	SucceedingServiceName   = "succeed"
-	EmptySubsetsServiceName = "empty-subsets"
-	FailingServiceName      = "fail"
+	MockServiceError          = "mock service didnt work"
+	SucceedingServiceName     = "succeed"
+	EmptyEndpointsServiceName = "empty-endpoints"
+	FailingServiceName        = "fail"
 )
 
 func (s sClient) Create(
