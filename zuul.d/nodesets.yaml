@@ -11,12 +11,6 @@
 # limitations under the License.
 
 - nodeset:
-    name: airship-kubernetes-entrypoint-single-node
-    nodes:
-      - name: primary
-        label: ubuntu-bionic
-
-- nodeset:
     name: airship-kubernetes-entrypoint-single-node-noble
     nodes:
       - name: primary

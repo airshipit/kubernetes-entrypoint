@@ -60,7 +60,7 @@ func setupConfigTemplate(templatePath string) error {
 		return err
 	}
 
-	if err := os.WriteFile(templatePath, configContent, 0o644); err != nil {
+	if err := os.WriteFile(templatePath, configContent, 0o600); err != nil {
 		return err
 	}
 

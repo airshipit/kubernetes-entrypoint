@@ -4,7 +4,7 @@ run:
   concurrency: 4
 
   # timeout for analysis, e.g. 30s, 5m, default is 1m
-  deadline: 3m
+  timeout: 3m
 
   # exit code when at least one issue was found, default is 1
   issues-exit-code: 1
@@ -47,7 +47,8 @@ run:
 # output configuration options
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
-  format: colored-line-number
+  formats:
+    - format: colored-line-number
 
   # print lines of code with issue, default is true
   print-issued-lines: true
@@ -71,8 +72,8 @@ linters-settings:
     # see https://github.com/kisielk/errcheck#excluding-functions for details
     # exclude: /path/to/file.txt
   govet:
-    # report about shadowed variables
-    check-shadowing: true
+    enable:
+      - shadow
   gofmt:
     # simplify code: gofmt with `-s` option, true by default
     simplify: true
@@ -139,7 +140,6 @@ linters:
     - gofmt                # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification
     - goimports            # Goimports does everything that gofmt does. Additionally it checks unused imports
     - gosec                # Inspects source code for security problems
-    - interfacer           # Linter that suggests narrower interface types
     - lll                  # Reports long lines
     - misspell             # Finds commonly misspelled English words in comments
     - nakedret             # Finds naked returns in functions greater than a specified function length

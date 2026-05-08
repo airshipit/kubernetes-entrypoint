@@ -63,7 +63,7 @@ func NewConfig(name string, prefix string) (*Config, error) {
 		name: name,
 		params: configParams{
 			IP:        ip,
-			IP_ERLANG: strings.Replace(ip, ".", ",", -1),
+			IP_ERLANG: strings.ReplaceAll(ip, ".", ","),
 			HOSTNAME:  hostname,
 		},
 		prefix: prefix,

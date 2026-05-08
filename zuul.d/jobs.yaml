@@ -26,7 +26,7 @@
     description: |
       Deploy Memcached using Airskiff and submitted kubernetes-entrypoint changes.
     parent: treasuremap-airskiff-infra-deploy-base
-    nodeset: treasuremap-airskiff-1node-ubuntu_noble
+    nodeset: treasuremap-airskiff-5nodes-ubuntu_noble
     required-projects:
       - name: airship/treasuremap
         override-checkout: v1.9
@@ -34,8 +34,8 @@
       treasuremap_ref: v1.9
       CLONE_KUBERNETES_ENTRYPOINT: false
       MAKE_KUBERTENES_ENTRYPOINT_IMAGES: true
+      DOCKER_REGISTRY: "control-plane.minikube.internal:5000"
       USE_ARMADA_GO: true
-      DOCKER_REGISTRY: localhost:5000
       gate_scripts_relative_path: ../../airship/treasuremap
 
 - job:
