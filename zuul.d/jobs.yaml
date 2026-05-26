@@ -41,11 +41,18 @@
 - job:
     name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_noble
     timeout: 3600
-    run: playbooks/docker-image-build.yaml
+    voting: false
+    parent: airship-docker-build-gate-base
     nodeset: airship-kubernetes-entrypoint-single-node-noble
+    required-projects:
+      - name: airship/treasuremap
+        override-checkout: v1.9
     vars:
       publish: false
       distro: ubuntu_noble
+      run_verbose_build: true
+      trivy_fail_on_vulns: true
+      trivy_severity: CRITICAL,HIGH
       tags:
         dynamic:
           patch_set: true
@@ -53,10 +60,15 @@
 - job:
     name: airship-kubernetes-entrypoint-docker-publish-ubuntu_noble
     timeout: 3600
-    run: playbooks/docker-image-build.yaml
+    parent: airship-docker-build-gate-base
     nodeset: airship-kubernetes-entrypoint-single-node-noble
+    required-projects:
+      - name: airship/treasuremap
+        override-checkout: v1.9
     secrets:
-      - airship_kubernetes_entrypoint_quay_creds_2026
+      - name: quay_creds
+        secret: airship_armada_quay_creds_2026
+        pass-to-parent: true
     vars:
       publish: true
       distro: ubuntu_noble
