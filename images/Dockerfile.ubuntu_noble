@@ -1,6 +1,6 @@
 ARG FROM=quay.io/airshipit/ubuntu:noble
 # Build the manager binary
-FROM quay.io/airshipit/golang:1.26.2-trixie AS builder
+FROM quay.io/airshipit/golang:1.26.3-trixie AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
