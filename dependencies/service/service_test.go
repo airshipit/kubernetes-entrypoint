@@ -45,7 +45,7 @@ var _ = Describe("Service", func() {
 		isResolved, err := service.IsResolved(context.TODO(), testEntrypoint)
 
 		Expect(isResolved).To(Equal(false))
-		Expect(err.Error()).To(Equal(mocks.MockEndpointSliceError))
+		Expect(err.Error()).To(Equal(fmt.Sprintf(FailingStatusFormat, service.name)))
 	})
 
 	It("checks resolution failure of a succeeding service with removed subsets", func() {

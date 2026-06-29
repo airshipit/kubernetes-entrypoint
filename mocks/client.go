@@ -13,6 +13,7 @@ import (
 type Client struct {
 	v1core.PodInterface
 	v1core.ServiceInterface
+	v1core.EndpointsInterface
 	v1apps.DaemonSetInterface
 	v1discovery.EndpointSliceInterface
 	v1batch.JobInterface
@@ -31,6 +32,10 @@ func (c Client) Services(namespace string) v1core.ServiceInterface {
 
 func (c Client) DaemonSets(namespace string) v1apps.DaemonSetInterface {
 	return c.DaemonSetInterface
+}
+
+func (c Client) Endpoints(namespace string) v1core.EndpointsInterface {
+	return c.EndpointsInterface
 }
 
 func (c Client) EndpointSlices(namespace string) v1discovery.EndpointSliceInterface {
@@ -52,6 +57,7 @@ func NewClient() *Client {
 	return &Client{
 		PodInterface:           NewPClient(),
 		ServiceInterface:       NewSClient(),
+		EndpointsInterface:     NewEPClient(),
 		DaemonSetInterface:     NewDSClient(),
 		EndpointSliceInterface: NewESClient(),
 		JobInterface:           NewJClient(),

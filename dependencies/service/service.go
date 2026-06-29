@@ -37,15 +37,22 @@ func NewService(name string, namespace string) Service {
 }
 
 func (s Service) IsResolved(ctx context.Context, entrypoint entry.EntrypointInterface) (bool, error) {
+	// Try EndpointSlices first (new API; requires endpointslices RBAC in the chart).
 	listOptions := metav1.ListOptions{LabelSelector: fmt.Sprintf("%s=%s", discoveryv1.LabelServiceName, s.name)}
-	esList, err := entrypoint.Client().EndpointSlices(s.namespace).List(ctx, listOptions)
-	if err != nil {
-		return false, err
+	if esList, err := entrypoint.Client().EndpointSlices(s.namespace).List(ctx, listOptions); err == nil {
+		for _, es := range esList.Items {
+			for _, e := range es.Endpoints {
+				if len(e.Addresses) > 0 && (e.Conditions.Ready == nil || *e.Conditions.Ready) {
+					return true, nil
+				}
+			}
+		}
 	}
 
-	for _, es := range esList.Items {
-		for _, e := range es.Endpoints {
-			if len(e.Addresses) > 0 && (e.Conditions.Ready == nil || *e.Conditions.Ready) {
+	// Fall back to Endpoints (legacy API; required by charts that only grant endpoints RBAC).
+	if ep, err := entrypoint.Client().Endpoints(s.namespace).Get(ctx, s.name, metav1.GetOptions{}); err == nil {
+		for _, subset := range ep.Subsets {
+			if len(subset.Addresses) > 0 {
 				return true, nil
 			}
 		}
