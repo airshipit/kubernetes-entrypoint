@@ -11,6 +11,9 @@ PUSH_IMAGE        ?= false
 # use this variable for image labels added in internal build process
 LABEL             ?= org.airshipit.build=community
 COMMIT            ?= $(shell git rev-parse HEAD)
+# RFC 3339, spelled portably: date --rfc-3339 is a GNU extension and
+# errors out on BSD date, leaving the label empty.
+BUILD_DATE        ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 PYTHON            = python3
 CHARTS            := $(filter-out deps, $(patsubst charts/%/.,%,$(wildcard charts/*/.)))
 DISTRO             ?= ubuntu_noble
@@ -18,6 +21,15 @@ DISTRO_ALIAS	   ?= ubuntu_noble
 IMAGE             := ${DOCKER_REGISTRY}/${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG}-${DISTRO}
 IMAGE_ALIAS              := ${DOCKER_REGISTRY}/${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG}-${DISTRO_ALIAS}
 UBUNTU_BASE_IMAGE ?=
+# Builder image. The default is amd64 only, so building on any other
+# architecture runs the Go toolchain under emulation, where it crashes.
+# Override with a multi-arch image, e.g. GOLANG_BASE_IMAGE=golang:1.26.4-trixie
+GOLANG_BASE_IMAGE ?=
+# Platform of the produced image. The builder stage runs on the native
+# platform and cross-compiles to this one, so building for a foreign
+# architecture never runs the Go toolchain under emulation, where it
+# crashes. Set to the host platform to build for the machine you are on.
+PLATFORM          ?= linux/amd64
 
 # VERSION INFO
 GIT_COMMIT = $(shell git rev-parse HEAD)
@@ -50,6 +62,7 @@ endif
 
 
 _BASE_IMAGE_ARG := $(if $(UBUNTU_BASE_IMAGE),--build-arg FROM="${UBUNTU_BASE_IMAGE}" ,)
+_GOLANG_IMAGE_ARG := $(if $(GOLANG_BASE_IMAGE),--build-arg GOLANG_IMAGE="${GOLANG_BASE_IMAGE}" ,)
 
 MAKE_TARGET := build
 
@@ -95,12 +108,15 @@ vet: ## Run go vet against code.
 .PHONY: docker-image
 docker-image:
 ifeq ($(USE_PROXY), true)
-	@docker build --network host -t $(IMAGE) --label $(LABEL) \
+	@$(CONTAINER_TOOL) buildx build --network host \
+		--platform $(PLATFORM) --load \
+		-t $(IMAGE) --label $(LABEL) \
 		--label "org.opencontainers.image.revision=$(COMMIT)" \
-		--label "org.opencontainers.image.created=$(shell date --rfc-3339=seconds --utc)" \
+		--label "org.opencontainers.image.created=$(BUILD_DATE)" \
 		--label "org.opencontainers.image.title=$(IMAGE_NAME)" \
 		-f images/Dockerfile.$(DISTRO) \
 		$(_BASE_IMAGE_ARG) \
+		$(_GOLANG_IMAGE_ARG) \
 		--build-arg MAKE_TARGET=$(MAKE_TARGET) \
 		--build-arg http_proxy=$(PROXY) \
 		--build-arg https_proxy=$(PROXY) \
@@ -109,13 +125,16 @@ ifeq ($(USE_PROXY), true)
 		--build-arg no_proxy=$(NO_PROXY) \
 		--build-arg NO_PROXY=$(NO_PROXY) .
 else
-	@docker build --network host -t $(IMAGE) --label $(LABEL) \
+	@$(CONTAINER_TOOL) buildx build --network host \
+		--platform $(PLATFORM) --load \
+		-t $(IMAGE) --label $(LABEL) \
 		--label "org.opencontainers.image.revision=$(COMMIT)" \
-		--label "org.opencontainers.image.created=$(shell date --rfc-3339=seconds --utc)" \
+		--label "org.opencontainers.image.created=$(BUILD_DATE)" \
 		--label "org.opencontainers.image.title=$(IMAGE_NAME)" \
 		-f images/Dockerfile.$(DISTRO) \
 		--build-arg MAKE_TARGET=$(MAKE_TARGET) \
-		$(_BASE_IMAGE_ARG) .
+		$(_BASE_IMAGE_ARG) \
+		$(_GOLANG_IMAGE_ARG) .
 endif
 ifneq ($(DISTRO), $(DISTRO_ALIAS))
 	docker tag $(IMAGE) $(IMAGE_ALIAS)

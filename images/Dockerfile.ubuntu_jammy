@@ -1,6 +1,7 @@
 ARG FROM=quay.io/airshipit/ubuntu:jammy
 # Build the manager binary
-FROM quay.io/airshipit/golang:1.25.5-trixie AS builder
+ARG GOLANG_IMAGE=quay.io/airshipit/golang:1.25.5-trixie
+FROM --platform=${BUILDPLATFORM} ${GOLANG_IMAGE} AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
