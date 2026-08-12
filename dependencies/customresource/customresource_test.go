@@ -47,6 +47,63 @@ const listOfTwoCRResolvers = `
   }
 ]`
 
+const listOfConditionResolvers = `
+[
+  {
+    "apiVersion": "api1",
+    "kind": "kind1",
+    "namespace": "foospace1",
+    "name": "foo1",
+    "conditions": [
+      {
+        "type": "Ready",
+        "status": "True"
+      },
+      {
+        "type": "Degraded",
+        "status": "False"
+      }
+    ]
+  },
+  {
+    "apiVersion": "api2",
+    "kind": "kind2",
+    "namespace": "foospace2",
+    "name": "foo2",
+    "conditions": [
+      {
+        "type": "Ready"
+      }
+    ]
+  }
+]`
+
+// conditioned builds a resource whose status carries the given conditions,
+// each a type/status pair.
+func conditioned(conditions ...[2]string) *unstructured.Unstructured {
+	items := []interface{}{}
+	for _, condition := range conditions {
+		items = append(items, map[string]interface{}{
+			"type":               condition[0],
+			"status":             condition[1],
+			"reason":             "Reconciled",
+			"message":            "",
+			"lastTransitionTime": "2026-08-08T00:00:00Z",
+		})
+	}
+	return &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "stable.example.com/v1",
+			"kind":       "Foo",
+			"name":       "my-foo",
+			"namespace":  "default",
+			"status": map[string]interface{}{
+				"conditions": items,
+			},
+		},
+	}
+}
+
 func TestFromEnv(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -120,6 +177,41 @@ func TestFromEnv(t *testing.T) {
 					Namespace:  "default",
 					Name:       "foo",
 					Fields:     []Field{},
+				},
+			},
+			expectErr: false,
+		},
+		{
+			name:      "Conditions",
+			useEnvVar: true,
+			envVar:    listOfConditionResolvers,
+			expected: []Resolver{
+				{
+					APIVersion: "api1",
+					Kind:       "kind1",
+					Namespace:  "foospace1",
+					Name:       "foo1",
+					Conditions: []Condition{
+						{
+							Type:   "Ready",
+							Status: "True",
+						},
+						{
+							Type:   "Degraded",
+							Status: "False",
+						},
+					},
+				},
+				{
+					APIVersion: "api2",
+					Kind:       "kind2",
+					Namespace:  "foospace2",
+					Name:       "foo2",
+					Conditions: []Condition{
+						{
+							Type: "Ready",
+						},
+					},
 				},
 			},
 			expectErr: false,
@@ -281,6 +373,144 @@ func TestIsResolved(t *testing.T) {
 			expected:  false,
 			expectErr: true,
 			clientErr: nil,
+		},
+		{
+			name:           "ConditionReady",
+			customResource: conditioned([2]string{"Ready", "True"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready", Status: "True"}},
+			},
+			expected:  true,
+			expectErr: false,
+		},
+		{
+			name:           "ConditionStatusDefaultsToTrue",
+			customResource: conditioned([2]string{"Ready", "True"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  true,
+			expectErr: false,
+		},
+		{
+			name:           "ConditionNotReadyYet",
+			customResource: conditioned([2]string{"Ready", "False"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name:           "ConditionUnknown",
+			customResource: conditioned([2]string{"Ready", "Unknown"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name:           "ConditionSelectedByType",
+			customResource: conditioned([2]string{"Degraded", "False"}, [2]string{"Ready", "True"}),
+			resolver: Resolver{
+				Kind: "Foo",
+				Name: "my-foo",
+				Conditions: []Condition{
+					{Type: "Ready"},
+					{Type: "Degraded", Status: "False"},
+				},
+			},
+			expected:  true,
+			expectErr: false,
+		},
+		{
+			name:           "ConditionTypeAbsent",
+			customResource: conditioned([2]string{"Degraded", "False"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name: "NoConditionsAtAll",
+			customResource: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "stable.example.com/v1",
+					"kind":       "Foo",
+					"name":       "my-foo",
+				},
+			},
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name: "ConditionsNotAList",
+			customResource: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "stable.example.com/v1",
+					"kind":       "Foo",
+					"name":       "my-foo",
+					"status":     map[string]interface{}{"conditions": "not-a-list"},
+				},
+			},
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name: "ConditionStatusNotAString",
+			customResource: &unstructured.Unstructured{
+				Object: map[string]interface{}{
+					"apiVersion": "stable.example.com/v1",
+					"kind":       "Foo",
+					"name":       "my-foo",
+					"status": map[string]interface{}{
+						"conditions": []interface{}{
+							map[string]interface{}{"type": "Ready", "status": true},
+						},
+					},
+				},
+			},
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  false,
+			expectErr: true,
+		},
+		{
+			name:           "FieldsAndConditionsTogether",
+			customResource: conditioned([2]string{"Ready", "True"}),
+			resolver: Resolver{
+				Kind:       "Foo",
+				Name:       "my-foo",
+				Fields:     []Field{{Key: "kind", Value: "Foo"}},
+				Conditions: []Condition{{Type: "Ready"}},
+			},
+			expected:  true,
+			expectErr: false,
 		},
 	}
 

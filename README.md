@@ -116,6 +116,37 @@ Given the above, kubernetes-entrypoint will wait until the value of
 
 Note also that `fields` is a list, meaning that multiple fields can be monitered.
 
+Resources that follow the Kubernetes API conventions report their state as a
+list of conditions rather than as a single key. Such a list cannot be addressed
+by `fields`, which names one nested key at a time, so conditions are matched
+with `conditions` instead, the way `kubectl wait --for=condition=<type>` does:
+
+`DEPENDENCY_CUSTOM_RESOURCE='[{"apiVersion":"stable.example.com/v1","kind":"Foo","name":"my-foo","conditions":[{"type":"Ready"}]}]'`
+```
+apiVersion: stable.example.com/v1
+kind: Foo
+metadata:
+  name: my-foo
+  namespace: default
+status:
+  conditions:
+    - type: Ready
+      status: "False"
+      reason: Reconciling
+      message: waiting for the backend
+      lastTransitionTime: "2026-08-08T00:00:00Z"
+```
+Given the above, kubernetes-entrypoint will wait until the condition of type
+`Ready` reports status `True`. A condition's `status` may be given explicitly
+to wait for something other than readiness, for example
+`{"type":"Degraded","status":"False"}`; it defaults to `True`.
+
+A resource that has not been reconciled yet carries no conditions at all. That
+is treated as unresolved rather than as a permanent failure, so the dependency
+keeps waiting.
+
+`fields` and `conditions` may be used together, in which case both must match.
+
 ## Image
 
 Build process for image is triggered after each commit.

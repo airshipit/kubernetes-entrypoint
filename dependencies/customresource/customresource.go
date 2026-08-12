@@ -14,13 +14,19 @@ import (
 	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
 
+// DefaultConditionStatus is the status a Condition expects when it does not
+// say otherwise, matching the common case of waiting for something to become
+// ready rather than to fail.
+const DefaultConditionStatus = "True"
+
 // A Resolver represents the state of a CustomResource
 type Resolver struct {
-	APIVersion string  `json:"apiVersion"`
-	Kind       string  `json:"kind"`
-	Name       string  `json:"name"`
-	Namespace  string  `json:"namespace"`
-	Fields     []Field `json:"fields"`
+	APIVersion string      `json:"apiVersion"`
+	Kind       string      `json:"kind"`
+	Name       string      `json:"name"`
+	Namespace  string      `json:"namespace"`
+	Fields     []Field     `json:"fields"`
+	Conditions []Condition `json:"conditions"`
 }
 
 var _ entrypoint.Resolver = Resolver{}
@@ -29,6 +35,23 @@ var _ entrypoint.Resolver = Resolver{}
 type Field struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+// A Condition names an entry of the resource's status.conditions list and the
+// status that entry must report, the way kubectl wait --for=condition=<type>
+// does.
+//
+// Conditions cannot be expressed as a Field, because a Field addresses one
+// nested key by name and a condition list is addressed by matching the type of
+// its elements. Resources that follow the Kubernetes API conventions report
+// readiness this way, so without this a dependency on such a resource cannot
+// be written at all.
+type Condition struct {
+	Type string `json:"type"`
+	// Status defaults to DefaultConditionStatus when empty. It is defaulted
+	// where it is compared rather than where it is parsed, so that a Resolver
+	// built in code behaves the same as one read from the environment.
+	Status string `json:"status"`
 }
 
 func init() {
@@ -66,7 +89,59 @@ func (r Resolver) IsResolved(ctx context.Context, ep entrypoint.EntrypointInterf
 		}
 	}
 
+	for _, condition := range r.Conditions {
+		expected := condition.Status
+		if expected == "" {
+			expected = DefaultConditionStatus
+		}
+
+		actual, err := conditionStatus(customResource.Object, condition.Type)
+		if err != nil {
+			return false, err
+		}
+		if actual != expected {
+			return false, fmt.Errorf("expected condition [%s] to be [%s], but got [%s]",
+				condition.Type, expected, actual)
+		}
+	}
+
 	return true, nil
+}
+
+// conditionStatus returns the status reported by the condition of the given
+// type, or an error when the resource carries no such condition yet. A
+// resource that has not been reconciled has no conditions at all, which is not
+// a permanent failure: the caller retries.
+func conditionStatus(object map[string]interface{}, conditionType string) (string, error) {
+	value, found, err := unstructured.NestedFieldNoCopy(object, "status", "conditions")
+	if err != nil {
+		return "", err
+	}
+	if !found {
+		return "", fmt.Errorf("resource has no [status.conditions]")
+	}
+
+	conditions, ok := value.([]interface{})
+	if !ok {
+		return "", fmt.Errorf("[status.conditions] is not a list")
+	}
+
+	for _, item := range conditions {
+		condition, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if condition["type"] != conditionType {
+			continue
+		}
+		status, ok := condition["status"].(string)
+		if !ok {
+			return "", fmt.Errorf("condition [%s] has no string status", conditionType)
+		}
+		return status, nil
+	}
+
+	return "", fmt.Errorf("could not find condition of type [%s]", conditionType)
 }
 
 // fromEnv reads the value of the jsonEnv variable and returns the array of
