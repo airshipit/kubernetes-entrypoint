@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"slices"
 
 	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/config"
 	_ "opendev.org/airship/kubernetes-entrypoint/dependencies/container"
@@ -16,6 +17,10 @@ import (
 	command "opendev.org/airship/kubernetes-entrypoint/util/command"
 	"opendev.org/airship/kubernetes-entrypoint/util/env"
 )
+
+func getNoOpCommands() []string {
+	return []string{"echo", "true"}
+}
 
 func main() {
 	var comm []string
@@ -32,6 +37,11 @@ func main() {
 		// TODO(DTadrzak): we should consider other options to handle whether pod
 		// is an init-container
 		logger.Warning.Printf("COMMAND env is empty")
+		os.Exit(0)
+	}
+
+	if len(comm) == 1 && slices.Index(getNoOpCommands(), comm[0]) != -1 {
+		logger.Info.Printf("Early exit thanks to COMMAND being set to \"%v\"", comm[0])
 		os.Exit(0)
 	}
 
