@@ -34,11 +34,12 @@
       treasuremap_ref: v1.9
       CLONE_KUBERNETES_ENTRYPOINT: false
       MAKE_KUBERTENES_ENTRYPOINT_IMAGES: true
-      DOCKER_REGISTRY: "control-plane.minikube.internal:5000"
       USE_ARMADA_GO: true
+      helm_version: 4.2.2
+      HELM_ARTIFACT_URL: https://get.helm.sh/helm-v4.2.2-linux-amd64.tar.gz
+      DISTRO: ubuntu_noble
+      zuul_treasuremap_relative_path: ../../airship/treasuremap
       gate_scripts_relative_path: ../../airship/treasuremap
-      HTK_COMMIT: 94ead9359a388331e71b13d83f0d14a71fa3f3ce
-      OSH_COMMIT: 94ead9359a388331e71b13d83f0d14a71fa3f3ce
 
 - job:
     name: airship-kubernetes-entrypoint-docker-build-gate-ubuntu_noble
